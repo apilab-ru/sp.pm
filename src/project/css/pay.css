@@ -1,0 +1,16 @@
+.pay-blockchain{
+    max-width: 265px;
+}
+.pay-blockchain__item{
+    border:2px dashed rgb(242, 213, 68);
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.pay-blockchain__strelka{
+    height: 32px;
+    width: 69px;
+    background: url(/build/img/blockchain_strelka.svg) center no-repeat;
+    transform: rotate(180deg);
+    margin: 0 auto 13px;
+}

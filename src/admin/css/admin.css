@@ -1,0 +1,9 @@
+.admin-box{
+    height: calc(100vh - 105px);  
+}
+.admin-content{
+    min-height: calc(100vh - 150px);
+}
+.cursor{
+    cursor: pointer;
+}

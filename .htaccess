@@ -1,0 +1,19 @@
+AddDefaultCharset utf-8
+
+#Options All -Indexesc
+#Сжатие
+#AddOutputFilterByType DEFLATE text/html
+#AddOutputFilterByType DEFLATE application/javascript
+
+#<FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">
+#Header set Cache-Control "max-age=2592000"
+#</FilesMatch>
+
+RewriteEngine on 
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteRule ^(.*)$ /index.php?path=$1 [NC,L,QSA]
+
+ErrorDocument 404 /view/404.html

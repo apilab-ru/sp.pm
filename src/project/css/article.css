@@ -1,0 +1,17 @@
+.art-page{
+    padding: 50px 20px 70px;
+}
+.article-text{
+    max-width: 633px;
+    margin: 0 auto;
+    color: #590725;
+}
+.article-text p{
+    font-size: 20px;
+    margin: 0 0 10px;
+    text-indent: 20px;
+}
+.article-text a{
+    color:rgb(240, 10, 10);
+    text-decoration: underline;
+}

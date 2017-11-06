@@ -1,0 +1,38 @@
+<div class="admin-panel">
+    <h2> Токен истаграмм </h2>
+    <div class="cats-box__item auth-line">
+        <span>Текущий токен</span>
+        <span> {{instagram.nick}} </span>
+        <span> {{instagram.uid}} </span>
+        <span> {{instagram.token}} </span>
+        <img class="auth-logo" src="{{instagram.photo}}"/>
+        <a class="btn btn-primary templates-box__action" ng-click="instagramAuth()">
+            <i class="icon-pencil icon-white"></i> Авторизоваться
+        </a>
+    </div>
+    <br>
+    <h3> Размер разворота в мобильной версии </h2>
+    <div class="cats-box__item auth-line">
+        <div>
+            <span> Ширина </span>
+            <input type="text" ng-model="setting.imgTplMobile.width"/>
+        </div>
+        <div>
+            <span> Высота </span>
+            <input type="text" ng-model="setting.imgTplMobile.height"/>
+        </div>
+        <span class="btn btn-primary" ng-click="saveImgTpl('Mobile')"> Применить </span>
+    </div>
+    <h3> Размер разворота в pc версии </h2>
+    <div class="cats-box__item auth-line">
+        <div>
+            <span> Ширина </span>
+            <input type="text" ng-model="setting.imgTplPc.width"/>
+        </div>
+        <div>
+            <span> Высота </span>
+            <input type="text" ng-model="setting.imgTplPc.height"/>
+        </div>
+        <span class="btn btn-primary" ng-click="saveImgTpl('Pc')"> Применить </span>
+    </div>
+</div>

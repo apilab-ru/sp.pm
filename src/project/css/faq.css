@@ -1,0 +1,78 @@
+.faq-top-title{
+    font-size: 22px;
+    font-weight: 400;
+    color: #590725;
+    margin: 0;
+    padding: 24px 0;
+    text-align: center;
+}
+.faq-title{
+    color: #590725;
+    font-size: 22px;
+    font-weight: 400;
+    background-color: #f2d544;
+    margin: 0 0 25px;
+    padding: 13px 0 14px 35px;
+    position: relative;
+    max-width: 350px;
+}
+.faq-title:before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 15px;
+    position: absolute;
+    top: 0;
+    right: 100%;
+    background-color: #f2d544;
+}
+.faq-title:after {
+    content: "";
+    border: calc(5px + 10px) solid transparent;
+    border-top-color: rgba(89,7,37,1);
+    border-right-width: 0;
+    height: 0;
+    width: 0;
+    position: absolute;
+    right: 100%;
+    top: 100%;
+}
+.faq-text{
+    padding-left: 25px;
+    padding-bottom: 40px;
+}
+.faq-checkbox{
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: normal;
+    color: #414141;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.faq-checkbox:before{
+    content:"";
+    background: url(/build/img/faq-checkbox.png) no-repeat center;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    margin-right: 5px;
+    vertical-align: top;
+}
+.faq-checkbox.checked:before {
+    transform: rotate(180deg);
+}
+.faq-more{
+    padding-left: 60px;
+    display: none;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in;
+    color: #414141;
+    font-size: 17px;
+}
+.faq-more p{
+    text-indent: 25px;
+    max-width: 660px;
+}
+.faq-more ul{
+    max-width: 660px;
+}

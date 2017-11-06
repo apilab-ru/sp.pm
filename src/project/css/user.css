@@ -1,0 +1,70 @@
+.user-photo__box{
+    width: 170px;
+    height: 200px;
+    border:2px dashed rgba(242, 213, 68, 1);
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.user-photo__ventex{
+    background: url(/build/img/ventex.svg) no-repeat;
+    width: 184px;
+    height: 122px;
+    position: absolute;
+    bottom: -91px;
+    left: -6px;
+}
+.cabinet-left-row{
+    width: 280px;
+    margin-top: 35px;
+    margin-left: 50px;
+    margin-right: auto;
+}
+.user-photo__title{
+    color: #414141;
+    font-size: 18px;
+    text-decoration: underline;
+    cursor: pointer;
+    position: relative;
+    text-shadow: -1px -1px 9px #fff, -1px -1px 9px #fff;
+    z-index: 2;
+}
+.user-photo__img {
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    position: absolute;
+    top: 1px;
+    background-size: cover;
+    background-position: center;
+}
+.cabinet-main-box{
+    padding-bottom: 60px;
+}
+.cabinet-actions-box{
+    margin-top:95px;
+}
+.user-info__box {
+    margin-top: 65px;
+    margin-right: 110px;
+    width: 370px;
+}
+.user-info__box .form-input{
+    text-align: center;
+    min-height: 1.6em;
+}
+
+.status-process{
+    position: absolute;
+    height: 100%;
+    width: 0%;
+}
+.upload-input{
+    opacity: 0;
+    position: absolute;
+    top:0px;
+    left:0px;
+    width: 100%;
+    height: 100%;
+}
