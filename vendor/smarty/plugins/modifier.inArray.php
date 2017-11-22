@@ -4,6 +4,10 @@ function smarty_modifier_inArray($value,$arr)
     if(!$arr){
         return false;
     }
-    return in_array($value, $arr);
+    if(is_array($arr)){
+        return in_array($value, $arr);
+    }else{
+        return $value == $arr;
+    }
 }
 ?>

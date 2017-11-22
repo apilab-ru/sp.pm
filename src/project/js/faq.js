@@ -6,4 +6,4 @@ $(document).on('click', '.faq-checkbox', function () {
         $myb.addClass('checked');
     }
     $myb.next().toggle("fast");
-})
+});

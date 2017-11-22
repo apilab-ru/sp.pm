@@ -1,0 +1,75 @@
+.file-uploader__box{
+    position: relative;
+    margin: 2px;
+    border: 2px dashed rgba(242,213,68,1);
+    padding: 10px;
+}
+.file-uploader__box.one{
+    max-width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.file-uploader__input{
+    opacity: 0;
+    position: absolute;
+    z-index: 4;
+    top:0px;
+    left:0px;
+    width: 100% !important;
+    height: 100% !important;
+}
+.file-uploader__title{
+    color: #414141;
+    font-size: 18px;
+    text-decoration: underline;
+    cursor: pointer;
+    position: absolute;
+    left: 10px;
+    text-shadow: -1px -1px 9px #fff, -1px -1px 9px #fff;
+    z-index: 1;
+    bottom: 10px;
+    text-align: center;
+    right: 10px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.34);
+}
+.file-uploader__list{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 30px;
+}
+.js-file-item{
+    position: relative;
+}
+.js-file-item img{
+  max-width: 150px;  
+}
+.remove-icon{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+    cursor: pointer;
+    padding: 1px;
+    background: #e35651;
+    padding: 2px;
+    border-radius: 2px;
+    transition: background-color 0.3s;
+}
+.remove-icon:hover{
+    background-color: #bd362f;
+}
+.remove-icon:before {
+    content: "";
+    background-position: -312px 0;
+    background-image: url(/build/img/glyphicons-halflings-white.png);
+    position: relative;
+    width: 14px;
+    height: 14px;
+    z-index: 2;
+    display: block;
+}

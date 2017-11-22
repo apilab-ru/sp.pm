@@ -3,9 +3,9 @@
     <head>
         <title>Управление Совместными закупками</title>
         <link href="/build/admin.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     </head>
     <body ng-app="adminContent">
-        {literal}
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -13,12 +13,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="#"><b>Бутичок</b></a>
+                    <a class="brand" href="/admin/"><b>Бутичок</b></a>
                     <div class="nav-collapse collapse" ng-controller="MainUserController">
                         <ul class="nav pull-right">
-                            <li class="dropdown" ng-class="{open: isOpen}">
-                                <a class="cursor" role="button" class="dropdown-toggle" ng-click="toglerOpen()" >
-                                    <i class="icon-user"></i> {{user.surname}} {{user.name}}  <i class="caret"></i>
+                            <li class="dropdown js-toggle-open">
+                                <a class="cursor" role="button" class="dropdown-toggle" >
+                                    <i class="icon-user"></i> {$user.surname} {$user.name}  <i class="caret"></i>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
@@ -28,21 +28,37 @@
                             </li>
                         </ul>
                         <ul class="nav">
+                            <li {*class="active"*}>
+                                <a href="/">Главная</a>
+                            </li>
                             <li class="active">
-                                <a href="/page/main/">Главная</a>
+                                <a href="/admin/">Админпанель</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container-fluid admin-box"  ng-controller="NavigationControoler">
+        <div class="container-fluid admin-box" >
             <div class="row-fluid admin-content">
                 <div class="span2" id="sidebar">
-                    <ul class="nav nav-list bs-docs-sidenav nav-collapse collapse">
-                        <li ng-repeat="item in menu" class="top">
-                            <a href="{{item.link}}"><i class="icon-chevron-right"></i> {{item.name}}</a>
-                        </li>
+                    <ul class="nav nav-list bs-docs-sidenav nav-collapse collapse js-navigation">
+                        {foreach from=$menu key=class item=sect}
+                            <li class="top {if $sect.check}active{/if}">
+                                <a {if !$sect.list}href="/admin/{if $class}{$class}{/if}"{/if}>
+                                    <i class="icon-chevron-right"></i> {$sect.name}
+                                </a>
+                                {if $sect.list}
+                                <ul class="in-nav">
+                                    {foreach from=$sect.list item=item key=method}
+                                        <li {if $item.check}class='active'{/if}>
+                                            <a href="/admin/{$class}/{$method}"> {$item.name}</a>
+                                        </li>
+                                    {/foreach}
+                                </ul>
+                                {/if}
+                            </li>
+                        {/foreach}
                     </ul>
                 </div>
                 <div class="span10" id="content">
@@ -53,33 +69,32 @@
                                     <i class="icon-chevron-left hide-sidebar"><a title="Скрыть меню" rel='tooltip'>&nbsp;</a></i>
                                     <i class="icon-chevron-right show-sidebar" style="display:none;"><a title="Открыть меню" rel='tooltip'>&nbsp;</a></i>
                                     <span class="navBox">
-                                        <span ng-repeat="item in current" class="item">
-                                            {{item.name}} <span ng-show="item.checked == false" class="divider">/</span>
-                                        </span>
+                                        {*<span ng-repeat="item in current" class="item">
+                                            {$item.name} <span ng-show="item.checked == false" class="divider">/</span>
+                                        </span>*}
+                                        {include file='app:admin/navi'}
                                     </span>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="mainContent">
-                        <div class="row-fluid">
-                            <div ng-view></div>
-                        </div>
+                        {$html}
                     </div>
                 </div>
             </div>
-            {/literal}
             <footer>
                 <hr>
                 <p>&copy; Бутичок {$smarty.now|date:"Y"}</p>
             </footer>
         </div>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <script src="/build/angular.js"></script>
-        
-        <script src="/build/admin.js?{$smarty.now}"></script>
-        <script>
+        {*<script src="/build/angular.js"></script>*}
+        <script src='/src/admin/jquery-ui.js'></script>
+        <script src='/vendor/chosen/chosen.jquery.js'></script>
+        <script src="{'/build/admin.js'|checkVersion}"></script>
+        <script src="/vendor/ckeditor/ckeditor.js"></script>
+        {*<script>
             admin.setStorage({$data|json_encode}); 
-        </script>
+        </script>*}
     </body>
 </html>

@@ -43,6 +43,52 @@ var catalog = new function(){
         })
     }
     
+    this.purchaseInit = function()
+    {
+        self.purchaseReload();
+    }
+    
+    this.changeStockCat = function(myb)
+    {
+        var check = $(myb).prop('checked');
+        if( $(myb).val() == "0" ){
+            if(check){
+                $('.js-cat').prop('checked', false);
+            }
+        }else{
+            if(check){
+                $('.js-cat-all').prop('checked', false);
+            }
+        }
+        self.purchaseReload();
+    }
+    
+    this.purchaseReload = function()
+    {
+        var send = {
+            purchase : window.initPurchase
+        };
+        $('.js-catalog-filter input').each(function(n,i){
+            send[ $(i).attr('name') ] = $(i).val();
+        });
+        send.cats = [];
+        $('.js-catalog-cats input').each(function(n,i){
+            if( $(i).prop("checked") ){
+                send.cats.push( $(i).val() );
+            }
+        })
+        if(self.xchr){
+            self.xchr.abort();
+        }
+        
+        self.loader('.js-catalog-content');
+        self.post('catalog','stockList',send)
+        .then((mas)=>{
+            $('.js-catalog-content').html(mas.html);
+            $('.js-catalog-content').find('.custom-select').chosen({disable_search:true});
+        });
+    }
+    
     this.setPurchaseFavorite = function(purchase, myb)
     {
         var check = ($(myb).prop('checked')) ? 1 : 0;
@@ -68,6 +114,10 @@ var catalog = new function(){
 $(function(){
     if(window.initCatalog){
         catalog.init();
+    }
+    
+    if(window.initPurchase){
+        catalog.purchaseInit();
     }
     
     $(document).on('click','.js-modal',function(event){

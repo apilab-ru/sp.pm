@@ -10,11 +10,12 @@ class page extends base
         $menu = new \app\model\menu($args['struct']);
         
         return $this->render('page/index',[
-            'user'    => $_SESSION['user'],
-            'content' => $content,
-            'menu'    => $menu->getList(),
-            'title'   => $menu->getTitle(),
-            'description' => $menu->getDescription()
+            'user'        => $_SESSION['user'],
+            'content'     => $content,
+            'menu'        => $menu->getList(),
+            'title'       => $menu->getTitle(),
+            'description' => $menu->getDescription(),
+            'basket'      => new \app\model\basket()
         ]);
     }
     

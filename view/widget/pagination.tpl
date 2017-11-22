@@ -1,12 +1,11 @@
 {strip}
-    
-        <div class='customPaginator'>
-            {if $pages>1}
+    <div class='customPaginator'>
+        {if $pages>1}
             <ul class="pagination">
                 {if $page>1}
                     {if $page>5}
                         <li>
-                            <a onclick="{$func}(1);" {if $link}href='{$link}=1'{/if}>1</a>
+                            <a onclick="{$func}(1,event,this);" {if $link}href='{$link}=1'{/if}>1</a>
                         </li>
                         <li>
                             <a class='mnogotochie'>...</a>
@@ -18,7 +17,7 @@
                     {section start=1 name=j loop=5}
                         {if $page-$smarty.section.j.index > 0}
                             <li>
-                                <a  onclick="{$func}({$page-$delta+$smarty.section.j.index});" 
+                                <a  onclick="{$func}({$page-$delta+$smarty.section.j.index},event,this);" 
                                     {if $link}href='{$link}={$page-$delta+$smarty.section.j.index}'{/if}> 
                                     {$page-$delta+$smarty.section.j.index} 
                                 </a>
@@ -33,7 +32,7 @@
                     {section start=1 name=j loop=5}
                         {if $page + $smarty.section.j.index < $pages}
                             <li>
-                                <a onclick="{$func}({$page+$smarty.section.j.index})" {if $link}href='{$link}={$page+$smarty.section.j.index}'{/if}> 
+                                <a onclick="{$func}({$page+$smarty.section.j.index},event,this)" {if $link}href='{$link}={$page+$smarty.section.j.index}'{/if}> 
                                     {$page+$smarty.section.j.index} 
                                 </a>
                             </li>
@@ -47,14 +46,13 @@
                 {/if}
                 {if $page!=$pages}
                     <li>
-                        <a  onclick="{$func}({$pages});" {if $link}href='{$link}={$pages}'{/if}>{$pages}</a>
+                        <a  onclick="{$func}({$pages},event,this);" {if $link}href='{$link}={$pages}'{/if}>{$pages}</a>
                     </li>
                 {/if}
             </ul>
-            {/if}
-            <div class="count">
-                Всего: <b>{$count}</b>
-            </div>
+        {/if}
+        <div class="count">
+            Всего: <b>{$count}</b>
         </div>
-    
+    </div>
 {/strip}

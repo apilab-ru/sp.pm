@@ -1,0 +1,18 @@
+.footer-contacts {
+    color: #fff;
+    max-width: 1200px;
+    margin: 0px auto;
+    padding: 12px;
+    line-height: 1.2em;
+}
+.footer-contacts__contacts{
+    margin-left: 50px;
+}
+footer{
+    background: rgba(113, 69, 2, 1);
+    min-height: 85px;
+}
+.footer-contacts__line{
+    display: flex;
+    flex-wrap: wrap;
+}

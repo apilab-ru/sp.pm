@@ -71,25 +71,6 @@ html{
     margin-right: 15px;
     margin-left: auto;
 }
-.basket-img{
-   background: url(/build/img/basket.png) no-repeat center; 
-   width: 64px;
-   height: 64px;
-}
-.basket-box{
-    position: relative;
-}
-.basket-count__box{
-    position: absolute;
-}
-.basket-count{
-    display: table;
-    margin: 22px auto 0;
-    padding: 3px;
-    border-radius: 100%;
-    background: #fff;
-    color: #590725;
-}
 .menu-list{
     list-style: none;
     width: 100%;
@@ -282,10 +263,6 @@ html{
 .flex-line{
     display: flex;
 }
-footer{
-    background: rgba(113, 69, 2, 1);
-    height: 85px;
-}
 
 .loader__box{
     position: absolute;
@@ -388,4 +365,23 @@ footer{
     background-size: contain;
     width: calc(100% - 2px);
     height: calc(100% - 2px);
+}
+
+.yellow-button{
+    font-weight: bold;
+    color: #fff;
+    background: #f2d544;
+    font-size: 14px;
+    padding: 7px 15px;
+    border:none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.yellow-button:hover {
+    background: #d4ba36;
+}
+
+.flex-end{
+    justify-content: flex-end;
 }

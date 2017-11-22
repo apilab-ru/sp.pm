@@ -2,7 +2,8 @@
 
 return [
     "users" => [
-        "list" => ["admin"]
+        "list" => ["admin"],
+        "save" => ["admin"]
     ],
     "images" => [
         "add" => ["simple","admin","organizator"]

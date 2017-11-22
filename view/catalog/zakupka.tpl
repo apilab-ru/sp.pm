@@ -2,7 +2,7 @@
     <div class="zakupka">
         <div class="zakupka-info">
             <div class="zakupka__left-row">
-                 <div class="sub-navi">
+                <div class="sub-navi">
                     <a class="sub-navi__item" href="/catalog/">Каталог</a> / <a class="sub-navi__act"> Закупка #{$purchase.id} {$purchase.name}</a>
                 </div>
                 <h1 class="art-title">{$purchase.name}</h1>
@@ -84,28 +84,39 @@
     <div class="c-title"> Каталог </div>
     <div class="c-box">
         <div class="c-left">
-            <div class="c-top-filter">
-                
-            </div>
+            <form class="c-top-filter js-catalog-filter" onsubmit="catalog.purchaseReload();event.preventDefault();">
+                <div class="c-top-filter__range">
+                    <span class="c-top-filter__title"> Цена от/до: </span>
+                    <input name="price_from" class="c-top-filter__range-value"/>
+                    <span class="long-defis"></span>
+                    <input name="price_to" class="c-top-filter__range-value"/>
+                </div>
+                <button class="yellow-button"> Искать </button>
+            </form>
+            <div class="p-catalog__box js-catalog-content"></div>
         </div>
         <div class="c-right">
-            <div class="c-filter__box">
+            <div class="c-filter__box js-catalog-cats">
                 <div class="c-filter__title">
                     Категории
                 </div>
                 <label class="checkbox c-filter__check-item">
                     <span class="c-filter__check-name"> Все категории </span>
-                    <input type="checkbox" class="checkbox__input js-cat" name="cats" value="0"/>
+                    <input type="checkbox" class="checkbox__input js-cat-all" name="cats" value="0" checked onchange="catalog.changeStockCat(this)"/>
                     <span class="c-filter__check-value checkbox__check-stat"></span>
                 </label>
                 {foreach from=$cats item=cat}
                 <label class="checkbox c-filter__check-item">
                     <span class="c-filter__check-name"> {$cat.name} </span>
-                    <input type="checkbox" class="checkbox__input js-cat" name="cats" value="{$cat}"/>
+                    <input type="checkbox" class="checkbox__input js-cat" name="cats" value="{$cat.id}" onchange="catalog.changeStockCat(this)"/>
                     <span class="c-filter__check-value checkbox__check-stat"></span>
                 </label>
                 {/foreach}
             </div>
         </div>
-    </div>            
+    </div>
+            
+    <script>
+        var initPurchase = {$purchase.id};
+    </script>
 {/strip}

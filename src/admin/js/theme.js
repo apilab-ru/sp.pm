@@ -15,4 +15,33 @@ $(function() {
         $('.hide-sidebar').show();
         $('#sidebar').show('fast');
     });
+    
+    $(document).on('click','.nav-list li.top',function(event){
+        event.preventDefault();
+        $(this).parents('.nav-list')
+                .find('.active')
+                .removeClass('active');
+        $(this).addClass('active');
+    })
+
+    $(document).on('click','.nav-list li.top ul a',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        var $a = $(this);
+        var $li = $a.parents('li:first');
+        $li.addClass('active');
+        $li.siblings('.active').removeClass('active');
+
+        if($a.attr('href')){
+            navi.go( $a.attr('href') );
+        }
+    })
+    
+    $(document).on('click','.js-toggle-open',function(){
+        if( $(this).hasClass("open") ){
+            $(this).removeClass("open");
+        }else{
+            $(this).addClass("open");
+        }
+    })
 });

@@ -53,11 +53,6 @@
         
         var loader = setInterval(function () {
             var curPerc = parseInt($load.attr('curpercent'));
-            /*if (curPerc == -5) {
-                $load.css({'transition': '0s'});
-            }else{
-                $load.css({'transition': "1s"});
-            }*/
             curPerc += 5;
             if (curPerc > 100) {
                 curPerc = 100;

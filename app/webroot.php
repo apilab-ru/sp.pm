@@ -4,12 +4,12 @@ namespace app;
 
 class webroot{
     
-    public function create($controller, $action, $cache=false)
+    public function create($controller, $action, $page=false)
     {
         return array(
             'controller' => $controller,
-            'action' => $action,
-            'cache' => $cache
+            'action'     => $action,
+            'page'       => $page
         );
     }
 }

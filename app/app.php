@@ -25,7 +25,11 @@ class app{
         if(class_exists($controller)){
             $controller = new $controller();
         }else{
-            $this->error404();
+            $this->error404($args);
+        }
+        
+        if( ! \app\app::$my->checkAccess($args['controller'],$method) ){
+            die("Доступ запрещён");
         }
         
         if(method_exists($controller, $method)){
@@ -36,12 +40,13 @@ class app{
                 echo $e->getMessage();
             }
         }else{
-            $this->error404();
+            $this->error404($args);
         }
     }
     
-    public function error404()
+    public function error404($args)
     {
+        pr($args);
         echo file_get_contents($_SERVER['DOCUMENT_ROOT']."/view/404.html");
         die();
     }

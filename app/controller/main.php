@@ -35,5 +35,15 @@ class main extends base{
             ]
         ); 
     }
+    
+    public function delivery()
+    {
+        echo (new page())->main(
+            $this->render('main/delivery'),
+            [
+                "struct" => 'delivery'
+            ]
+        );
+    }
 
 }

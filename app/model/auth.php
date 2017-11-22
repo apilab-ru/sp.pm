@@ -26,6 +26,7 @@ class auth extends base
     public function out()
     {
         unset($_SESSION['user']);
+        header("Location: /");
     }
     
     private $user = array(

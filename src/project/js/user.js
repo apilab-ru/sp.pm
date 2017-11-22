@@ -46,38 +46,3 @@ var user = new function()
     }
      
 }
-
-;var fileUploader = new function () 
-{
-    this.calcSize = function (image, a) {
-        var img = image,
-                w = img.width, h = img.height,
-                s = w / h;
-        if (w > a && h > a) {
-            if (img.width > img.height) {
-                img.width = a;
-                img.height = a / s;
-            } else {
-                img.height = a;
-                img.width = a * s;
-            }
-        }
-
-        return img;
-    }
-    
-    this.makePreview = function(file){
-        var fr = new FileReader();
-        fr.readAsDataURL(file);
-        return new Promise((resolve, reject) => {
-            fr.onload = (function (event) {
-                resolve(event.target.result)
-            });
-        });
-    }
-    
-    this.returnSrc = function(img, tpl)
-    {
-        return "/cachephoto" + img.folder + img.name + "_" + tpl + "." + img.type;
-    }
-}

@@ -332,7 +332,7 @@ class images extends base{
         $name  = explode(".",$file['name']);
         $title = $name[0];
         
-        $name  =  date("d-H-i-") . str_replace(["_"," "], "-", $title);
+        $name  =  date("d-H-i-") . str_replace(["_"," ","+"], "-", $title);
         
         $dir = $_SERVER['DOCUMENT_ROOT'] ."/" . $this->dirOrig . $folder;
         
@@ -377,6 +377,12 @@ class images extends base{
         return $this->db->selectRow("select * from images where parent='user' && parent_id=?d ORDER by id ASC", $id);
     }
     
+    public function remove($file)
+    {
+        $this->removePhoto($file['id']);
+        $this->removePhotoFile($file['folder'], $file['name'], $file['type']);
+    }
+    
     public function removePhoto($id)
     {
         $this->db->query("DELETE FROM images where id=?d", $id);
@@ -394,6 +400,20 @@ class images extends base{
             }
         }
                
+    }
+    
+    public function getFiles($data)
+    {
+        $files = array();
+        foreach($data['name'] as $n=>$name){
+            $files[] = array(
+                'name'     => $name,
+                'type'     => $data['type'][$n],
+                'tmp_name' => $data['tmp_name'][$n],
+                'size'     => $data['size'][$n]
+            );
+        }
+        return $files;
     }
     
     /*public function addImage($file)

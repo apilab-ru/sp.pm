@@ -103,7 +103,7 @@ class UrlMatcher implements UrlMatcherInterface
                 if (!$ret = $this->matchCollection($pathinfo, $route)) {
                     continue;
                 }
-
+                
                 return $ret;
             }
 

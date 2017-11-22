@@ -14,6 +14,9 @@
             <div class="auth-box">
                 {if $user}
                     <a href="/cabinet/" class="button yellow"> Личный кабинет </a>
+                    {if $user.type == 'admin'}
+                    <a href="/admin/" class="button yellow"> Админпанель </a>
+                    {/if}
                     <a class="js-auth-out button yellow"> Выйти </a>
                 {else}
                     <a class="js-reg button yellow"> Регистрация </a>
@@ -22,9 +25,9 @@
             </div>
             <div class="basket-box">
                 <div class="basket-count__box">
-                    <div class='basket-count'>12</div>
+                    <div class='basket-count'>{$basket->calcCount()}</div>
                 </div>
-                <div class="basket-img"></div>
+                <a class="basket-img" href="/order/"></a>
             </div>
         </div>
     </header>
@@ -87,7 +90,26 @@
     <section class='content main-col'>
         {$content}
     </section>
-    <footer></footer>
+    <footer>
+        <div class="footer-contacts" itemscope itemtype="http://schema.org/Organization">
+            <div class="footer-contacts__line">
+                <div>
+                    <div itemprop="name">Бутичок</div>
+                    <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+                      Адрес:
+                      <span itemprop="streetAddress">Льва Толстого, 16</span>
+                      <span itemprop="postalCode"> 119021</span>&nbsp;
+                      <span itemprop="addressLocality">Москва</span>
+                    </div>
+                </div>
+                <div class="footer-contacts__contacts">
+                    Телефон:<span itemprop="telephone">+7 495 739–70–00</span>,<br>
+                    Факс:<span itemprop="faxNumber">+7 495 739–70–70</span>,<br>
+                    Электронная почта: <span itemprop="email">pr@yandex-team.ru</span>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="/build/build.js?{$smarty.now}"></script> 
 </body>

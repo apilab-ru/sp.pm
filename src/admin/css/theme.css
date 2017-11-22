@@ -335,7 +335,7 @@ td.center,.center {
     display: block;
     width: 14px;
     height: 14px;
-    background-image: url(/source/bootstrap/img/glyphicons-halflings.png);
+    background-image: url(/build/img/glyphicons-halflings.png);
     background-position: 14px 14px;
     background-repeat: no-repeat;
     background-position: -288px 0;
@@ -463,4 +463,67 @@ td.center,.center {
 }
 .muted b{
     color: #333;
+}
+.nav-list a{
+    cursor: pointer;
+}
+td.type__image {
+    padding: 2px;
+}
+.mainContent {
+    position: relative;
+}
+.checkbox__input{
+    display: none !important;
+}
+.checkbox{
+    cursor: pointer;
+}
+label.checkbox{
+    padding-left: 0px !important;
+}
+.checkbox__check {
+    content: "";
+    display: inline-block;
+    border: 2px solid #f2d544;
+    width: 18px;
+    height: 18px;
+    vertical-align: sub;
+    margin-right: 3px;
+    border-radius: 3px;
+    position: relative;
+    
+}
+.checkbox__input:checked + .checkbox__check-stat:after{
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    content: "";
+    background: url(/build/img/ok.svg) center no-repeat;
+    background-size: contain;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+}
+
+.multi-flex-rows{
+    display: flex;
+    flex-wrap: wrap;
+}
+.row-x2{
+    width: 50%;
+}
+
+.js-popup.popup-box {
+    position: absolute;
+    top: 42px;
+    right: -200px;
+    z-index: 9999;
+    background: #fff;
+    padding: 10px 45px;
+    border: 1px solid #ccc;
+    transition: right 0.5s;
+    display: none;
+}
+.js-popup.popup-box.active{
+    right: 25px;
 }

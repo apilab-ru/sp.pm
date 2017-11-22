@@ -8,27 +8,28 @@ class images extends base
     //public $cache = '/cachephoto/';
     public function add($args, $param)
     {
-        $model = new \app\model\images();
-        
         if($param['parent'] == 'user' 
                 || (new \app\controller\auth())->isOrganizator()){
             
-            $res = $model->uploadFile($_FILES['file'], $param['parent']);
-            if($param['parent'] == 'user'){
-                $id = $model->addImage($res['name'], $res['title'], $res['folder'], $param['parent'], $_SESSION['user']['id'], $res['type']);
-                
-                $res['id'] = $id;
-                
-                $old = $model->getOldPhotoUser($_SESSION['user']['id']);
-                
-                if($old['id'] != $id){
-                    $model->removePhotoFile($old['folder'], $old['name'], $old['type']);
-                    $model->removePhoto($old['id']);
-                }
-            }
-            
-            return $res;
+            return $this->savePhotoUser($_FILES['file'], $_SESSION['user']['id']);
         }
+    }
+    
+    public function savePhotoUser($file, $user)
+    {
+        $model = new \app\model\images();
+        $res = $model->uploadFile($file, 'user');
+        $id  = $model->addImage($res['name'], $res['title'], $res['folder'], 'user', $user, $res['type']);
+
+        $res['id'] = $id;
+
+        $old = $model->getOldPhotoUser($user);
+
+        if($old['id'] != $id){
+            $model->removePhotoFile($old['folder'], $old['name'], $old['type']);
+            $model->removePhoto($old['id']);
+        }
+        return $res;
     }
     
     /*private function uploadFile($file, $parent)
@@ -67,6 +68,24 @@ class images extends base
         $file = $args['file'];
         $model = new \app\model\images();
         $model->createCache($args['parent']."/".$args['year']."/".$args['month'], $args['file'], $args['tpl'], $args['ext']  );
+    }
+    
+    public function upload()
+    {
+        $model = new \app\model\images();
+        $res = $model->uploadFile($_FILES['upload'], 'other');
+        $id  = $model->addImage($res['name'], $res['title'], $res['folder'], 'other', $user, $res['type']);
+        
+        $url = "/cachephoto" . $res['folder'] . $res['name'] . "_0x0x2." . $res['type'];
+        
+        $html = "<script>
+                window.parent.CKEDITOR.tools.callFunction({$_GET['CKEditorFuncNum']}, '$url');
+            </script>";
+                
+        return[
+            'mode' => 'html',
+            'html' => $html
+        ];
     }
     /*public function createCacheBook($args) 
     {

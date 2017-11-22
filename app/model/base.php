@@ -34,7 +34,7 @@ class Base
         return " limit $start,$limit";
     }
     
-    public function createOrder($order,$orderType,$defaultOrder="id",$defaultOrderType='DESC')
+    public function createOrder($order, $orderType, $defaultOrder="id", $defaultOrderType='DESC')
     {
         $order = $order ? $order : $defaultOrder;
         $orderType = ($orderType) ? $orderType : $defaultOrderType;
@@ -57,5 +57,78 @@ class Base
             $base[$key] = $item;
         }
         return $base;
+    }
+    
+    public function clearForm($form, $aviable)
+	{
+		foreach($form as $key=>$val){
+			if($aviable[$key]){
+				
+				if(is_array($aviable[$key])){
+					if(!in_array($val, $aviable[$key])){
+						$form[$key] = $aviable[$key][0];
+					}
+				}else{
+					switch($aviable[$key]){
+						case 'text':
+						case 'string':
+							//$form[$key] = $this->escape_string($val);
+							break;
+						
+						case 'int':
+							$form[$key] = intval($val);
+							break;
+                        
+                        case 'float':
+                            $form[$key] = floatval($val);
+                            break;
+						
+						case 'json':
+							if(!is_string($val)){
+								$form[$key] = json_encode($val, JSON_UNESCAPED_UNICODE);
+							}
+							break;
+							
+						case 'date':
+							$form[$key] = date("Y-m-d",strtotime($val));
+							break;
+						
+						case 'datetime':
+							$form[$key] = date("Y-m-d H:i:s",strtotime($val));
+							break;
+                        
+                        case 'password':
+                            if($val){
+                                $form[$key] = md5($val);
+                            }else{
+                               unset($form[$key]); 
+                            }
+                            break;
+					}
+				}
+				
+			}else{
+				unset($form[$key]);
+			}
+		}
+		return $form;
+	}
+    
+    public function prepareValue($val, $type='text')
+    {
+        switch($type){
+            case 'price':
+            case 'percent':
+                return floatval($val);
+                break;
+            
+            case 'radio':
+                return intval($val);
+                break;
+            
+            default:
+                return "'".$this->db->escape($val)."'";
+                break;
+        }
     }
 }

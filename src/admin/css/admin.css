@@ -7,3 +7,27 @@
 .cursor{
     cursor: pointer;
 }
+.text-option{
+    width: calc(100% - 20px);
+}
+.cus-tlist__box {
+    display: flex;
+    flex-wrap: wrap;
+}
+.cust-list__item {
+    position: relative;
+    padding: 3px 20px 3px 7px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin: 0 7px 7px 0;
+}
+.cust-list__box-add {
+    display: flex;
+    border: 1px solid #ccc;
+    padding: 3px;
+    border-radius: 4px;
+}
+.cust-list__input {
+    width: 100px;
+    margin-right: 5px;
+}
