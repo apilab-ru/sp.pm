@@ -382,6 +382,8 @@ td.center,.center {
     border-top: 1px solid #ccc;
     margin: 15px;
     box-sizing: border-box;
+    margin-top: 0px;
+    padding-top: 10px;
 }
 .customPaginator .pagination{
     margin: 10px;
@@ -512,13 +514,12 @@ label.checkbox{
 .row-x2{
     width: 50%;
 }
-
 .js-popup.popup-box {
     position: absolute;
     top: 42px;
     right: -200px;
     z-index: 9999;
-    background: #fff;
+    background: #58b0ea;
     padding: 10px 45px;
     border: 1px solid #ccc;
     transition: right 0.5s;
@@ -526,4 +527,12 @@ label.checkbox{
 }
 .js-popup.popup-box.active{
     right: 25px;
+}
+.js-popup.popup-box.error {
+    background: #d84d47;
+    color: #fff;
+}
+.card-box{
+    padding: 20px;
+    background: #fff;
 }

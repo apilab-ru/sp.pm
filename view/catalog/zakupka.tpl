@@ -3,7 +3,8 @@
         <div class="zakupka-info">
             <div class="zakupka__left-row">
                 <div class="sub-navi">
-                    <a class="sub-navi__item" href="/catalog/">Каталог</a> / <a class="sub-navi__act"> Закупка #{$purchase.id} {$purchase.name}</a>
+                    <a onclick="navigation.goMenu('/catalog/',event)" class="sub-navi__item" href="/catalog/">Каталог</a> 
+                    &nbsp;/ <a class="sub-navi__act"> Закупка #{$purchase.id} {$purchase.name}</a>
                 </div>
                 <h1 class="art-title">{$purchase.name}</h1>
                 <div class="art__after-title">
@@ -62,7 +63,7 @@
             <div class="zakupka__right-row">
                 <img class="organizator__photo-img" src="{$organizator.photo|img:"168x198x3"}"/>
                 <p> {$organizator.name} {$organizator.surname} </p>
-                <a class="main-info__link-item main-info__link">
+                <a class="main-info__link-item main-info__link" href="/organizator/{$organizator.id}/">
                     Профиль организатора
                 </a>
                 {if $user}
@@ -118,5 +119,8 @@
             
     <script>
         var initPurchase = {$purchase.id};
+        if('catalog' in window){
+            catalog.purchaseInit();
+        }
     </script>
 {/strip}

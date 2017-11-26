@@ -11,6 +11,7 @@ var user = new function(){
         
         $box.on('submit',function(event){
             event.preventDefault();
+            event.stopPropagation();
             var form = $box.serializeObject();
             var formData = new FormData();
 			formData.append('photo', $file.getFiles());

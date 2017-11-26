@@ -36,20 +36,47 @@ var admin = new function () {
         });
     }
     
-    this.editForm = function(link,id){
+    this.editForm = function(link, id, param){
         self.send(link.replace('/admin/','/admin/ajax/'), {
-            id : id
+            id    : id,
+            param : param
         })
         .then(function (mas) {
             var $win = self.createPop("Форма редактирования", mas.html);
-            self.initForm($win, mas, link);
+            self.initForm($win);
         });
     }
     
-    this.initForm = function($win, mas, link){
+    this.initForm = function($win){
         
         $win.find('form').on('close',function(){
             $win.remove();
+        })
+        
+        $win.on('submit',function(event){
+            event.preventDefault();
+            event.stopPropagation();
+            
+            var $form = $win.find('form');
+            
+            var $loader = self.loader( $form );
+            
+            var link = $form.attr('action');
+            
+            self.send(link.replace('/admin/','/admin/ajax/'), $form.serializeObject() )
+                    .then((stat)=>{
+                        if(!stat.stat){
+                            throw("Ошибка");
+                        }else{
+                            self.reload();
+                            $win.remove();
+                        }
+                    })
+                    .catch((e)=>{
+                        popUp(e,'error');
+                        $loader.remove();
+                    })
+            
         })
         
         //var link = link.split("/");

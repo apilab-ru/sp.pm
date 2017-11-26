@@ -37,6 +37,11 @@
     this.initOneUploader = function($box)
     {
         var file;
+        
+        $box.find('.file-uploader__title').on('click',function(){
+            $box.find('.js-file').click();
+        });
+        
         $box.find('.js-file').on('change',function(){
             file = this.files[0];
             self
@@ -55,19 +60,6 @@
         }
           
         return $box;
-        
-        /*self
-            .sendFile('/ajax/images/add/', file, {
-                parent: 'user'
-            }, $process)
-            .then((status)=>{
-                var url = fileUploader.returnSrc(status, '168x198x3');
-                $img.css({
-                    'backgroundImage' : "url(" + url + ")"});
-                
-            }).catch((error)=>{
-                console.log('error', error);
-            })*/
     }
     
     this.initListUploader = function($box, $list)

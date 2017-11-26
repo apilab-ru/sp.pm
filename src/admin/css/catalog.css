@@ -1,0 +1,14 @@
+.cat__box-edit{
+    margin-left: 50px;
+    position: relative;
+    min-height: 300px;
+    min-width: 200px;
+}
+.dd3-content .btn{
+    padding: 4px 7px;
+    line-height: 1em;
+    margin: -3px 2px;
+}
+.dd-name {
+    margin-right: auto;
+}

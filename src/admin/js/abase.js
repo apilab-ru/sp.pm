@@ -1,6 +1,8 @@
 "use strict";
 var abase = new function(){
     
+    var self = this;
+    
     this.createPop = function(title,html){
         var $div = $("<div class='popWindow'>");
 
@@ -86,11 +88,24 @@ var abase = new function(){
         return $loader;
     }
     
+    this.getItemTree = function(list, tree, parent)
+    {
+        $.each(tree,function(n,i){
+            list.push({
+                id     : i.id,
+                order  : n,
+                parent : parent
+            });
+            if(i.children){
+                self.getItemTree(list, i.children, i.id);
+            }
+        });
+        return list;
+    }
+    
 }
 
-//var popUpMessage = null;
-
-var popUp = function(text){
+var popUp = function(text, cl){
     
     var $box = $('.js-popup');
     if($box.length){
@@ -98,7 +113,7 @@ var popUp = function(text){
         $box.removeClass('active');
     }else{
         $box = $('<div/>',{
-            class : 'js-popup popup-box'
+            class : 'js-popup popup-box ' + cl
         });
         $('body').append($box);
     }

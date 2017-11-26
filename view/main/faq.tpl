@@ -8,6 +8,14 @@
         </h2>
         <article class='faq-text'>
             {$item.text}
+            {foreach from=$item.childNodes item=it}
+                <h3 class='faq-checkbox'>
+                    {$it.name}
+                </h3>
+                <div class='faq-more'>
+                    {$it.text}
+                </div>
+            {/foreach}
         </article>
     {/foreach}
 {/strip}

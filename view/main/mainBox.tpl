@@ -13,8 +13,8 @@
         </div>
         <div class='main-catalog__list'>
             {foreach from=$cats item=item}
-                <a class='main-catalog__item' href='/catalog/?cats={$item.link}'>
-                    <object type="image/svg+xml" data="{$item.image}" class='main-catalog__item-logo'></object>
+                <a onclick="navigation.goMenu('/catalog/?cats={$item.link}',event,'/catalog/')" class='main-catalog__item' href='/catalog/?cats={$item.link}'>
+                    <img class='main-catalog__item-logo' src="{$item.image|img:"80x80x1"}"/>
                     <div class='main-catalog__item-title'>
                         {$item.name}
                     </div>

@@ -23,12 +23,12 @@
                     <a class="js-auth-in button yellow"> Вход </a>
                 {/if}
             </div>
-            <div class="basket-box">
+            <a class="basket-box" href="/order/">
                 <div class="basket-count__box">
                     <div class='basket-count'>{$basket->calcCount()}</div>
                 </div>
-                <a class="basket-img" href="/order/"></a>
-            </div>
+                <div class="basket-img"></div>
+            </a>
         </div>
     </header>
     <div class='auth-form__box'>
@@ -82,7 +82,7 @@
         <ul class='menu-list'>
             {foreach from=$menu item=item}
             <li class='menu-item {if $item.checked}menu-checked{/if}'>
-                <a href='/{$item.link}{if $item.link}/{/if}'> {$item.name} </a>
+                <a onclick="navigation.clickMenu(this, event)" href='/{$item.link}{if $item.link}/{/if}'> {$item.name} </a>
             </li>
             {/foreach}
         </ul>

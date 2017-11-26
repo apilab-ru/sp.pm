@@ -29,9 +29,19 @@ class admin extends base
         "catalog" => [
             "name" => "Закупки",
             "list" => [
-                "purchaseTable" => ["name" => "Список закупок"],
-                "stockTable"    => ["name" => "Товары закупок"],
-                "catsEdit"      => ["name" => "Категории"]
+                "purchaseTable"   => ["name" => "Список закупок"],
+                "stockTable"      => ["name" => "Товары закупок"],
+                "catsEdit"        => ["name" => "Категории"],
+                "tagsTable"       => ["name" => "Теги"],
+                "discountsTable"  => ["name" => "Акции"]
+            ]
+        ],
+        "main" => [
+            "name" => "Статьи",
+            "list" => [
+                "editFaq" => ["name" => "Редактирование FAQ"]
+                //"editFaqStruct" => ["name" => "Структура FAQ"],
+                //"editFaqArts"   => ["name" => "Статьи FAQ"]
             ]
         ]
     ];
@@ -103,9 +113,13 @@ class admin extends base
             $param = json_decode($param['send'],1);
         }
         
-        ob_start();
-        $re = $class->{$args['subaction']}($param);
-        $res['html'] = ob_get_clean();
+        try{
+            ob_start();
+            $re = $class->{$args['subaction']}($param);
+            $res['html'] = ob_get_clean();
+        } catch (\Exception $e){
+            $res['error'] = $e->getMessage();
+        }
         
         if(gettype($re) == "array"){
            $res = $re;

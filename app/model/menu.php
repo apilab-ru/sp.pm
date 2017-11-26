@@ -11,7 +11,7 @@ class menu extends base
     {
         parent::__construct();
         if(!$this->list){
-            $this->list = $this->db->select("SELECT * from struct order by weight ASC");
+            $this->list = $this->db->select("SELECT * from struct where parent=0 order by weight ASC");
             foreach($this->list as $key=>$item){
                 if($item['link'] == $struct){
                     $this->list[$key]['checked'] = true;

@@ -1,20 +1,101 @@
-.order__param{
-    display: inline-block;
-    padding: 5px;
-}
-.order__table{
-    width: 100%;
-}
-.order__item td{
-    padding: 3px;
-    border-top:1px solid #714502;
-}
 .order__itog{
     background: #714502;
     color: #fff;
     padding: 10px 20px;
     text-align: right;
 }
-.order__item td:first-of-type{
-    border-left:1px solid #714502;
+.subnavigation__box {
+    display: flex;
+}
+.subnavigation__item {
+    margin-right: 10px;
+}
+.subnavigation__item.check {
+    background: #714502;
+    color:#fff;
+}
+.order__box{
+    margin-top: 10px;
+    /*font-size: 14px;*/
+}
+.order__zakupka{
+    border: 2px dashed rgba(242, 213, 68, 1);
+    padding: 2px;
+    margin-bottom: 30px;
+}
+.order__line-highlight{
+    background: #fcf2bf;
+    color: #590725;
+    padding: 12px 10px;
+}
+.order__name{
+    font-weight: bold;
+    padding-right: 10px;
+    color: #590725;
+}
+.order__organizator-line{
+   margin-top: 3px;
+}
+.order__stock-box{
+    padding: 20px;
+}
+.order__item{
+   display: flex;
+   flex-wrap: wrap;
+}
+.order__item > *{
+    margin-bottom: 20px;
+}
+.order__item-params{
+    margin-left: 15px;
+    margin-right: auto;
+    min-width: 220px;
+    max-width: 220px;
+}
+.order__param-value{
+    color: #2b6ca3;
+}
+.order__count-box{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+}
+.order__price-box{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+.order__del-title{
+    margin-left: 5px;
+    text-decoration: underline;
+}
+.catalog__order-item-del{
+    margin-left: auto;
+    margin-bottom: auto;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.catalog__summ-val{
+    font-weight: bold;
+    font-size: 24px;
+    color: #590725;
+    margin-top: 15px;
+}
+.order__count-block{
+    display: flex;
+    
+}
+.order__count-input{
+    width: 30px;
+    font-size: 20px;
+    padding: 7px;
+    border:1px solid rgb(242, 213, 68);
+}
+.order__count-change{
+    font-size: 20px;
+    cursor: pointer;
+    flex:1;
+    margin-right: 5px;
+    justify-content: center;
 }

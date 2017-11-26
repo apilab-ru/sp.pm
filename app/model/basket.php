@@ -59,6 +59,7 @@ class basket extends base
                     if(json_encode($pp) == $p){
                         $find = 1;
                         unset($this->card[$stock]['param'][$key]);
+                        $this->card[$stock]['param'] = array_values($this->card[$stock]['param']);
                         break;
                     }
                 }
@@ -91,15 +92,17 @@ class basket extends base
             ];
         }
         $current = $this->getBdCard($_SESSION['user']['id']);
+        
         $delete = [];
         $update = [];
         $insert = [];
+        
         foreach($this->card as $stock=>$item){
             if($current[$stock]){
-                $item['param'] = ($item['param']) ? "'".json_encode($item['param']) . "'" : "NULL";
+                $item['param'] = ($item['param']) ? "'".json_encode($item['param'], JSON_UNESCAPED_UNICODE) . "'" : "NULL";
                 $update[ $current[$stock]['id'] ] = $item; 
             }else{
-                $param = ($item['param']) ? "'".json_encode($item['param']) . "'" : "NULL";
+                $param = ($item['param']) ? "'".json_encode($item['param'], JSON_UNESCAPED_UNICODE) . "'" : "NULL";
                 $insert[] = "({$_SESSION['user']['id']}, {$stock}, {$item['count']}, $param)";
             }
         }
@@ -120,7 +123,7 @@ class basket extends base
         
         if($update){
             foreach($update as $id=>$up){
-                $this->db->query("UPDATE user_basket set `count`=?d, `param`={$up['param']} where id=?d", $up['count'], $up['param'],$id);
+                $this->db->query("UPDATE user_basket set `count`=?d, `param`={$up['param']} where id=?d", $up['count'], $id);
             }
         }
         

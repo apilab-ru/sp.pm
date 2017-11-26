@@ -14,15 +14,13 @@ class users extends base
     public function cabinet()
     {
         if(!$_SESSION['user']){
-            (new \app\controller\page())->authPage();
+            return (new \app\controller\page())->authBox();
         }else{
             $user = (new \app\model\users())->getUser();
-            echo (new \app\controller\page())->main(
-                $this->render('users/cabinet',[
-                    'user' => $user
-                ]),
-                ["struct" => "cabinet"]
-            );
+            echo $this->render('users/cabinet',[
+                'user' => $user
+            ]);
+            return  ["struct" => "cabinet"];
         }
     }
     
@@ -109,10 +107,11 @@ class users extends base
     
     public function organizator($args, $param)
     {
-        echo (new page())->main(
-                "organizator " . $args['id'],
-                ["struct"=>"organizator"]
-            );
+        echo  "organizator " . $args['id'];
+        
+        return [
+            "struct" => "organizator"
+        ];
     }
     
     public function delete($param)

@@ -7,7 +7,7 @@
                 <div class="catalog__list-filter">
                     {foreach from=$cats item=item}
                     <label>
-                        <input name="cat[]" value="{$item.id}" type="checkbox" class="checkbox__hidden"/>
+                        <input name="cat[]" value="{$item.id}" type="checkbox" class="checkbox__hidden" {if $check && $item.link == $check}checked{/if}/>
                         <span class="main-info__link-item main-info__link checkbox__button">
                             {$item.name}
                         </span>
@@ -99,5 +99,8 @@
     </div>
     <script>
         window.initCatalog = 1;
+        if( 'catalog' in window ){
+            catalog.init();
+        }
     </script>
 {/strip}

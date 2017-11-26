@@ -131,4 +131,11 @@ class Base
                 break;
         }
     }
+    
+    public function updateTree($table, $list)
+    {
+        foreach($list as $item){
+            $this->db->query("UPDATE $table SET parent=?d, `order`=?d where id=?d", $item['parent'], $item['order'], $item['id']);
+        }
+    }
 }

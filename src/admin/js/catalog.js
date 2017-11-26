@@ -9,6 +9,7 @@ var catalog = new function()
         CKEDITOR.replace('editDescr');
         $box.on('submit',function(event){
             event.preventDefault();
+            event.stopPropagation();
             var form = $box.serializeObject();
             form.form.description = CKEDITOR.instances.editDescr.getData();
             self.send('/admin/ajax/catalog/savePurchase',form)
@@ -46,6 +47,7 @@ var catalog = new function()
         
         $box.on('submit',function(event){
             event.preventDefault();
+            event.stopPropagation();
             
             var form = $box.serializeObject().form;
             form.description = CKEDITOR.instances.editDescr.getData();
@@ -89,5 +91,93 @@ var catalog = new function()
             
         });
     }
+    
+    this.initEditCats = function(){
+    {
+        var timeoutUpdate;
+            
+        $('#cats').nestable()
+            .on('change',(e)=>{
+                clearTimeout(timeoutUpdate);
+                setTimeout(()=>{
+                    var tree = $('#cats').nestable('serialize');
+                    var list = self.getItemTree([], tree, 0);
+                    self.send('/admin/ajax/catalog/catsListUpdate',{
+                        list : list
+                    })
+                }, 700)
+            })
+    }
+    
+    this.deleteCat = function(id, myb)
+    {
+        if(confirm("Удалить категорию ? Вложенные категории будут сброшены в корневой уровень")){
+            var $parent = $(myb).parents('.js-item');
+            var $loader = self.loader( $parent );
+            self.send('/admin/ajax/catalog/catRemove',{id:id})
+            .then((stat)=>{
+                if(stat.stat){
+                    $parent.remove();
+                    return stat;
+                }else{
+                    throw(stat.error);
+                }
+            })
+            .catch((e)=>{
+                popUp(e);
+                $loader.remove();
+            })
+        }
+    }
+    
+    this.editCat = function(id)
+    {
+        var $box = $('.js-cat-edit');
+        self.loader( $box );
+        self.send('/admin/ajax/catalog/catEdit',{id:id})
+            .then((mas)=>{
+                $box.html(mas.html);
+                var $file = $box.find('.js-file-uploader') ;
+                fileUploader.initOneUploader($file);
+                
+                $box.on('submit','.js-form',function(event){
+                    event.preventDefault();
+                    self.saveCat( $(this), $file );
+                });
+            })
+            .catch((e)=>{
+                $box.html(e);
+            });
+    }
+    
+    this.saveCat = function($form, $file)
+    {
+        var form = $form.serializeObject();
+        var formData = new FormData();
+        formData.append('file', $file.getFiles());
+        formData.append('send', JSON.stringify(form));
+
+        var $loader = self.loader( $('.js-cat-edit') );
+
+        self
+        .sendFormData('/admin/ajax/catalog/catSave', formData)
+        .then((status)=>{
+            if(status.stat == 1){
+                return status;
+            }else{
+                throw("Произошла ошибка");
+            }
+        })
+        .then((status)=>{
+            admin.reload();
+        })
+        .catch((e)=>{
+            popUp(e);
+        })
+        .then(()=>{
+           $loader.remove(); 
+        })
+    }
+}
     
 };

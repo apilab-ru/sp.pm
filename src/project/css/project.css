@@ -100,6 +100,7 @@ html{
 .content{
     background: #fff;
     min-height: calc(100vh - 412px);
+    position: relative;
 }
 .main-titlte{
    font-size: 40px;
@@ -384,4 +385,7 @@ html{
 
 .flex-end{
     justify-content: flex-end;
+}
+a{
+    color: #2b6ca3;
 }

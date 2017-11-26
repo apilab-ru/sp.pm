@@ -35,7 +35,15 @@ class app{
         if(method_exists($controller, $method)){
             try{
                 ob_start();
-                $controller->$method($args, $send);
+                $res = $controller->$method($args, $send);
+                $content = ob_get_clean();
+                if($args['page'] && $send['send']['page']!='ajax'){
+                    $page = new controller\page();
+                    echo $page->main($content, $res);
+                }else{
+                    echo $content;
+                }
+                
             }catch(\Exception $e){
                 echo $e->getMessage();
             }

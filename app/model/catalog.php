@@ -7,12 +7,37 @@ class catalog extends base
     
     public function getMainList()
     {
-        return $this->db->select("select * from cats where parent=0");
+        $list = $this->db->select("select *,id as ARRAY_KEY from cats where parent=0");
+        
+        $ids = [];
+        foreach($list as $item){
+            $ids[$item['image']] = $item['id'];
+        }
+        $images = $this->db->select("select * from images where id in (?a)",array_keys($ids));
+        foreach($images as $img){
+           $list[ $ids[ $img['id'] ] ]['image'] = $img; 
+        }
+        
+        return $list;
     }
     
     public function getCats()
     {
         return $this->db->select("select * from cats");
+    }
+    
+     public function getTreeCats()
+    {
+        return $this->db->select("select *,id as ARRAY_KEY, parent as PARENT_KEY from cats");
+    }
+    
+    public function getCat($id)
+    {
+        $row = $this->db->selectRow("select * from cats where id=?d", $id);
+        if($row['image']){
+            $row['image'] = $this->db->selectRow("select * from images where id=?d", $row['image']);
+        }
+        return $row;
     }
     
     public function getCatsList()
@@ -25,13 +50,76 @@ class catalog extends base
         return $this->db->select("SELECT *,id as ARRAY_KEY FROM `discount`");
     }
     
+    public function getDiscount($id)
+    {
+        return $this->db->selectRow("SELECT * from discount where id=?d",$id);
+    }
+    
     public function getTags()
     {
         return $this->db->select("SELECT *,id as ARRAY_KEY FROM `tags`");
     }
     
+    public $tagsFilter = [
+        'limit'      => 10,
+        'page'       => 1,
+        'order'      => 'id',
+        'order_type' => 'DESC'
+    ];
+    public function getTagsByFilter($filter)
+    {
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * from tags ";
+        
+        $filter = $this->setFilter($this->tagsFilter, $filter);
+        
+        $page  = intval($filter['page']);
+        $limit = intval($filter['limit']);
+        
+        $sql .= $this->createOrder($filter['order'], $filter['order_type']);
+        
+        $sql .= $this->createLimit($page, $limit);
+        
+        $list = $this->db->select($sql);
+        
+        return [
+            'list'  => $list,
+            'count' => $this->getCount(),
+            'page'  => $page,
+            'limit' => $limit
+        ];
+    }
+    
+    public $discountsFilter = [
+        'limit'      => 10,
+        'page'       => 1,
+        'order'      => 'id',
+        'order_type' => 'DESC'
+    ];
+    public function getDiscountsByFilter($filter)
+    {
+        $filter = $this->setFilter($this->discountsFilter, $filter);
+        
+        $sql = "SELECT SQL_CALC_FOUND_ROWS id,name from discount ";
+        $page  = intval($filter['page']);
+        $limit = intval($filter['limit']);
+        
+        $sql .= $this->createOrder($filter['order'], $filter['order_type']);
+        
+        $sql .= $this->createLimit($page, $limit);
+        
+        $list = $this->db->select($sql);
+        
+        return [
+            'list'  => $list,
+            'count' => $this->getCount(),
+            'page'  => $page,
+            'limit' => $limit
+        ];
+    }
+    
+    
     public $filter = [
-        'limit'      => 5,
+        'limit'      => 10,
         'page'       => 1,
         'order'      => 'p.id',
         'order_type' => 'DESC'
@@ -262,27 +350,37 @@ class catalog extends base
     public function calcedBasketItems($stocks, $list)
     {
         $groupped = [];
-        $purchases = [];
+        $pids = [];
         foreach($list as $key=>$set){
             if($stocks[$key]){
                 
-                $purchases[ $stocks[$key]['purchase'] ] = 1;
+                $pkey = $stocks[$key]['purchase'];
                 
-                $stocks[$key]['count'] = $set['count'];
-                $stocks[$key]['param'] = $set['param'];
-                $stocks[$key]['summ']  = $set['count'] * $stocks[$key]['price'];
-                $groupped[ $stocks[$key]['purchase'] ]['list'][] = $stocks[$key];
+                $pids[ $pkey ] = $pkey;
+                
+                foreach($set['param'] as $param){
+                    $paramKey = $key . json_encode($param);
+                    $groupped[ $pkey ]['list'][$paramKey]['stock'] = $stocks[$key];
+                    $groupped[ $pkey ]['list'][$paramKey]['count'] ++;
+                    $groupped[ $pkey ]['list'][$paramKey]['summ'] = $groupped[ $pkey ]['list'][$paramKey]['count'] * $stocks[$key]['price'];
+                    $groupped[ $pkey ]['list'][$paramKey]['param'] = $param;
+                }
+                
             }
         }
         
-        $purchases = $this->getListPurchases(array_keys($purchases), true);
+        $purchases = $this->getListPurchases(array_keys($pids), true);
+        
+        $users = new \app\model\users();
+        
+        foreach($purchases as $id=>$purchase){
+            $purchases[$id]['user'] = $users->getUser($purchase['user']);
+        }
         
         foreach($groupped as $pur=>$pdata){
             $total = 0;
             $sbor = $purchases[$pur]['sbor'];
-            $groupped[$pur]['name'] = $purchases[$pur]['name'];
-            $groupped[$pur]['user'] = $purchases[$pur]['user'];
-            $groupped[$pur]['sbor'] = $sbor;
+            $groupped[$pur]['purchase'] = $purchases[$pur];
             foreach($pdata['list'] as $key=>$item){
                 $groupped[$pur]['list'][$key]['sbor'] = ($sbor / 100) * $item['summ'];
                 $groupped[$pur]['list'][$key]['itog'] += $item['summ'] + $groupped[$pur]['list'][$key]['sbor'];
@@ -291,7 +389,6 @@ class catalog extends base
             $groupped[$pur]['total'] = $total;
         }
         
-        pr($groupped);
         return $groupped;
     }
     
@@ -382,7 +479,7 @@ class catalog extends base
         if($ids){
             $where = " where p.id in (" .implode(",", $ids) . ")";
         }
-        $sql = "select p.id,p.id as ARRAY_KEY,p.name";
+        $sql = "select p.id,p.id as ARRAY_KEY,p.name ";
         
         if($sbor){
             $sql .= ",v.value_percent as sbor, p.user ";
@@ -434,6 +531,7 @@ class catalog extends base
         'id'          => 'int',
         'cat'         => 'int',
         'name'        => 'string',
+        'purchase'    => 'int',
         'description' => 'text',
         'price'       => 'float',
         'sizes'       => 'json',
@@ -458,5 +556,21 @@ class catalog extends base
             $file = $images->uploadFile($file,'stock');
             $images->addImage($file['name'], $file['name'], $file['folder'], 'stock', $id, $file['type']);
         }
+    }
+    
+    public function removeCat($id)
+    {
+        $this->db->query("UPDATE cats SET parent=0 where parent=?d", $id);
+        $this->db->query("DELETE from cats where id=?d", $id);
+    }
+    
+    public function updateCatList($list)
+    {
+        return $this->updateTree('cats', $list);
+    }
+    
+    public function getTag($id)
+    {
+        return $this->db->selectRow("select * from tags where id=?d",$id);
     }
 }

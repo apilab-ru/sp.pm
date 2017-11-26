@@ -6,6 +6,14 @@ var minifyCss = require('gulp-minify-css');
 var minify = require("gulp-babel-minify");
 var concat = require('gulp-concat');
 
+var path = {
+    admin : {
+        css : ['src/admin/css/*.css','src/project/css/spinner.css','vendor/chosen/chosen.css','vendor/nestable/nestable.css'],
+        js  : ['src/admin/js/*.js','vendor/nestable/jquery.nestable.js']
+    }
+    
+};
+
 gulp.task('css-prod', function() {
     return gulp.src(['src/project/css/*.css','vendor/chosen/chosen.css'])
        .pipe(minifyCss())
@@ -44,27 +52,28 @@ gulp.task('js', function() {
     .pipe(gulp.dest('build'));
 });
 
+
 gulp.task('css-admin', function() {
-    return gulp.src(['src/admin/css/*.css','src/project/css/spinner.css','vendor/chosen/chosen.css'])
+    return gulp.src(path.admin.css)
        .pipe(concat('admin.css'))
        .pipe(gulp.dest('build'));
 });
 
 gulp.task('js-admin', function() {
-    return gulp.src(['src/admin/js/*.js'])
+    return gulp.src(path.admin.js)
        .pipe(concat('admin.js'))
        .pipe(gulp.dest('build'));
 });
 
 gulp.task('css-admin-prod', function() {
-    return gulp.src(['src/admin/css/*.css','src/project/css/spinner.css','vendor/chosen/chosen.css'])
+    return gulp.src(path.admin.css)
        .pipe(minifyCss())
        .pipe(concat('admin.css'))
        .pipe(gulp.dest('build'));
 });
 
 gulp.task('js-admin-prod', function() {
-    return gulp.src(['src/admin/js/*.js'])
+    return gulp.src(path.admin.js)
        .pipe(minify({
             mangle: {
               keepClassName: true,

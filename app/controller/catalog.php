@@ -19,15 +19,15 @@ class catalog extends base
     {
         $catalog = new \app\model\catalog();
         
-        echo (new page())->main(
-            $this->render("catalog/catalog",[
+        echo $this->render("catalog/catalog",[
                 'cats'     => $catalog->getCats(),
                 'discount' => $catalog->getDiscounts(),
-                'tags'     => $catalog->getTags()
-            ]),
-            [
-                'struct' => 'catalog'
+                'tags'     => $catalog->getTags(),
+                'check'    => $param['cats']
             ]);
+        return [
+            'struct' => 'catalog'
+        ];
     }
     
     public function dataList($args, $param)
@@ -52,20 +52,19 @@ class catalog extends base
         $organizator = (new \app\model\users())->getUser( $purchase['user'] );
         $user        = $_SESSION['user'];
         
-        
-        echo (new page())->main(
-          $this->render('catalog/zakupka',[
-              'purchase'    => $purchase,
-              'organizator' => $organizator,
-              'discounts'   => $catalog->getPurchaseDiscount($purchase['id']),
-              'options'     => $catalog->getPurchaseOptions($purchase['id']), 
-              'user'        => $user,
-              'cats'        => $catalog->getPurchaseStockCats($purchase['id']),
-              'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['id'], $user['id'])
-          ]),    
-          [
-            "struct" => "zakupha"
+        echo $this->render('catalog/zakupka', [
+            'purchase'    => $purchase,
+            'organizator' => $organizator,
+            'discounts'   => $catalog->getPurchaseDiscount($purchase['id']),
+            'options'     => $catalog->getPurchaseOptions($purchase['id']),
+            'user'        => $user,
+            'cats'        => $catalog->getPurchaseStockCats($purchase['id']),
+            'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['id'], $user['id'])
         ]);
+
+        return  [
+            "struct" => "zakupha"
+        ];
     }
     
     public function setPurchaseFavorite($args, $param)
@@ -123,18 +122,17 @@ class catalog extends base
         
         $groupped  = $catalog->calcedBasketItems($stocks, $list); 
         
-        echo (new page())->main(
-          $this->render('catalog/order',[
-              'groupped' => $groupped
-          ]),    
-          [
+        echo $this->render('catalog/order',[
+            'groupped' => $groupped
+        ]);    
+        return [
             "struct" => "order"
-        ]);
+        ];
     }
     
-    public function payPurchase()
+    public function payPurchase($args, $param)
     {
-        
+        pr($param);
     }
     
     public function purchaseTable($param)
@@ -238,6 +236,8 @@ class catalog extends base
             $object['images'] = $catalog->getImagesStock($id);
         }
         $purchases = $catalog->getListPurchases();
+        
+        
         return $this->render('catalog/formEditStock',[
             'object'    => $object,
             'purchases' => $purchases,
@@ -299,6 +299,175 @@ class catalog extends base
     
     public function catsEdit()
     {
+        $catalog = new \app\model\catalog();
+        $cats = $catalog->getTreeCats();
         
+        return $this->render('catalog/catsEdit',[
+            'cats' => $cats
+        ]);
+    }
+    
+    public function catEdit($send)
+    {
+        $catalog = new \app\model\catalog();
+        $cat = $catalog->getCat($send['send']['id']);
+        return $this->render('catalog/catEdit',[
+            'object' => $cat
+        ]);
+    }
+    
+    public function catSave($send)
+    {
+        $catalog = new \app\model\catalog();
+        
+        if($_FILES['file']){
+            $files = new \app\model\images();
+        }
+        
+        if($files && $send['id']){
+            $cat = $catalog->getCat($send['id']);
+            if($cat['image']){
+                $files->remove($cat['image']);
+            }
+        }
+        
+        if($files){
+            $file = $files->uploadFile($_FILES['file'], 'other');
+            $send['image'] = $files->addImage($file['name'], $file['title'], $file['folder'], 'other', 0, $file['type']);
+        }
+        
+        $send['id'] = $catalog->updateObject('cats', $send);
+        
+        return [
+            'stat'   => 1
+        ];
+    }
+    
+    public function catRemove($send)
+    {
+        $id = $send['send']['id'];
+        $catalog = new \app\model\catalog();
+        $cat = $catalog->getCat($id);
+        if(!$cat){
+            throw new \Exception("Ошибка, категория не надена");
+        }
+        if($cat['image']){
+            (new \app\model\images())->remove($cat['image']);
+        }
+        $catalog->removeCat($id);
+        return [
+            'stat' => 1
+        ];
+    }
+    
+    public function catsListUpdate($send)
+    {
+        $catalog = new \app\model\catalog();
+        $catalog->updateCatList($send['send']['list']);
+        return [
+            'stat' => 1
+        ];
+    }
+    
+    public function tagsTable()
+    {
+        $widget  = new widget();
+        $catalog = new \app\model\catalog();
+        
+        $data = $catalog->getTagsByFilter($param,1);
+        
+        return $widget->tableAndFilter(
+            $widget->tableByFilter(
+                $data,
+                [
+                    'title'  => 'Тэги',
+                    'add'    => '/admin/catalog/editTag',
+                    'edit'   => "/admin/catalog/editTag",
+                    'delete' => "/admin/catalog/deleteTag",
+                    "labels" => [
+                        "id"            => "id",
+                        "name"          => "Название"
+                ]]), 
+            ""
+        );
+    }
+    
+    public function editTag($send)
+    {
+        if($send['send']['id']){
+            $object = (new \app\model\catalog())->getTag($send['send']['id']);
+        }
+        return $this->render('catalog/formEditTag',[
+            'object' => $object
+        ]);
+    }
+    
+    public function saveTag($send)
+    {
+        $catalog = new \app\model\catalog();
+        $id = $catalog->updateobject('tags', $send['send']['form']);
+        if($id){
+            return [
+                'stat' => 1,
+                'id'   => $id
+            ];
+        }
+    }
+    
+    public function deleteTag($send)
+    {
+        $catalog = new \app\model\catalog();
+        $catalog->deleteObject('tags', $send['send']['id']);
+    }
+    
+    public function discountsTable()
+    {
+        $widget  = new widget();
+        $catalog = new \app\model\catalog();
+        
+        $data = $catalog->getDiscountsByFilter($param,1);
+        
+        return $widget->tableAndFilter(
+            $widget->tableByFilter(
+                $data,
+                [
+                    'title'  => 'Скидки',
+                    'add'    => '/admin/catalog/editDiscount',
+                    'edit'   => "/admin/catalog/editDiscount",
+                    'delete' => "/admin/catalog/deleteDiscount",
+                    "labels" => [
+                        "id"            => "id",
+                        "name"          => "Название"
+                ]]), 
+            ""
+        );
+    }
+    
+    public function editDiscount($send)
+    {
+        if($send['send']['id']){
+            $object = (new \app\model\catalog())->getDiscount($send['send']['id']);
+        }
+        return $this->render('catalog/formEditDiscount',[
+            'object' => $object
+        ]);
+    }
+    
+    public function saveDiscount($send)
+    {
+        $catalog = new \app\model\catalog();
+        $id = $catalog->updateobject('discount', $send['send']['form']);
+        if($id){
+            return [
+                'stat' => 1,
+                'id'   => $id
+            ];
+        }
+    }
+    
+    public function deleteDiscount($send)
+    {
+        $catalog = new \app\model\catalog();
+        $catalog->deleteObject('discount', $send['send']['id']);
     }
 }

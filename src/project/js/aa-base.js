@@ -10,6 +10,20 @@
        return form;
    }
    
+    this.send = function (url, send) {
+        return new Promise((resolve, reject) => {
+            $.post(url, {
+                send: send
+            }, function (mas) {
+                if (mas) {
+                    resolve(mas);
+                } else {
+                    reject("Ошибка сети");
+                }
+            })
+        });
+    }
+   
    this.post = function (controller, action, send) {
         if(!send){
             send = {};

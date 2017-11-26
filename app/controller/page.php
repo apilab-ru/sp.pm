@@ -21,7 +21,12 @@ class page extends base
     
     public function authPage()
     {
-        echo $this->main(" Вы не авторизованны ");
+        echo $this->main($this->authBox());
+    }
+    
+    public function authBox()
+    {
+        return "Вы не авторизованны";
     }
     
 }
