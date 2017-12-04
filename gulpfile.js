@@ -1,3 +1,4 @@
+//npm install gulp-minify-css
 var gulp = require('gulp');
 var watch = require('gulp-watch');
 //var watch = require('gulp-watch'); // Better Watch
