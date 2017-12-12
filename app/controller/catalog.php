@@ -118,21 +118,147 @@ class catalog extends base
         $catalog = new \app\model\catalog();
         
         $list      = $basket->getList();
-        $stocks    = $catalog->getListForBasket($list);
-        
+        $stocks    = $catalog->getListForBasket(array_keys($list));
         $groupped  = $catalog->calcedBasketItems($stocks, $list); 
         
+        $ordered  = $catalog->getOrderedList($_SESSION['user']); 
+        $ids = [];
+        foreach($ordered as $order){
+            $ids[ $order['stock'] ] = $order['stock'];
+        }
+        $stocks      = $catalog->getListForBasket($ids);
+        $orderGroups = $catalog->calcOrderGroup($stocks, $ordered);
+        
         echo $this->render('catalog/order',[
-            'groupped' => $groupped
+            'selected'    => 'order',
+            'content'     => $this->render('catalog/orderMain',[
+                'groupped'    => $groupped,
+                'orderGroups' => $orderGroups,
+                'statuses'    => $catalog->statuses,
+            ])
         ]);    
         return [
             "struct" => "order"
         ];
     }
     
+    public function orders($param, $args)
+    {
+        $catalog = new \app\model\catalog();
+        $widget  =  new \app\controller\widget();
+        
+        $data = $catalog->getDataOrders([
+            'user'        => $_SESSION['user']['id'],
+            'notcomplete' => 1,
+            'limit'       => 10,
+            'page'        => $args['page']
+        ]);
+        
+        $data['statuses']   = $catalog->orderStatuses;
+        $data['link']       = $widget->prepeareLink($_SERVER['REQUEST_URI']);
+        $data['pagination'] = $widget->pagination($data);
+        
+        echo $this->render('catalog/order',[
+            'selected'    => 'orders',
+            'content'     => $this->render('catalog/orders', $data),
+        ]);
+        
+        return ["struct" => "orders"];
+    }
+    
+    public function ordersArchive()
+    {
+        $catalog = new \app\model\catalog();
+        $widget  =  new \app\controller\widget();
+        
+        $data = $catalog->getDataOrders([
+            'user'   => $_SESSION['user']['id'],
+            'status' => 'complete',
+            'limit'  => 10,
+            'page'   => $args['page']
+        ]);
+        
+        $data['statuses']   = $catalog->orderStatuses;
+        $data['link']       = $widget->prepeareLink($_SERVER['REQUEST_URI']);
+        $data['pagination'] = $widget->pagination($data);
+        
+        echo $this->render('catalog/order',[
+            'selected'    => 'archive',
+            'content'     => $this->render('catalog/orders', $data)
+        ]);
+        
+        return ["struct" => "orders/archive"];
+    }
+    
+    public function orderInfo($args)
+    {
+        $catalog = new \app\model\catalog();
+        $order   = $catalog->getOrder($args['id']);
+        if(!$order || $order['user'] != $_SESSION['user']['id']){
+            echo "<div class='message-single'><div class='error message'>Ошибка! Заказ не найден!</div></div>";
+            return;
+        }
+        $list = $catalog->getOrderedList($_SESSION['user']['id'], null, $order['id']);
+        $stocks    = $catalog->getListForBasket(array_map(function($it){
+            return $it['stock'];
+        },$list));
+        foreach($list as $key=>$item){
+            $list[$key]['stock'] = $stocks[$item['stock']];
+        }
+        $purchase = $catalog->getPurchaseInfo(reset($list)['purchase']);
+        //pr($purchase, $order, $list, $stocks);
+        echo $this->render("catalog/orderId",[
+            'order'       => $order,
+            'purchase'    => $purchase,
+            'list'        => $list
+        ]);
+    }
+
+    public function sendPayReport($args, $send)
+    {
+        //($send);
+        $catalog = new \app\model\catalog();
+        $order = $catalog->getOrder($send['order']);
+        if(!$order || $order['user'] != $_SESSION['user']['id']){
+            throw new \Exception("Не найден заказ");
+        }
+        $purchase = $catalog->getPurchaseInfo($order['purchase']);
+        $notice = new notice();
+        
+        $catalog->setStatusOrder($order['id'],'check');
+        
+        $notice->payReport($purchase["user"],$purchase, $_SESSION['user'], $order, $send['num']);
+        return [
+            'stat' => 1
+        ];
+    }
+    
     public function payPurchase($args, $param)
     {
-        pr($param);
+        $catalog  = new \app\model\catalog();
+        $purchase = $catalog->getPurchaseInfo($args['id']);
+        
+        if(!$purchase || !$purchase['active'] || $purchase['status'] != 'stop'){
+            $error = "purchase";
+        }
+        
+        if(!$error){
+            $list = $catalog->getOrderedList($_SESSION['user']['id'], $args['id']);
+            if($list){
+                $total = $catalog->calcSummList( $list );
+                $order = $catalog->addOrder($_SESSION['user']['id'], $args['id'], $total);
+                $catalog->addBasketStockToOrder( array_keys($list), $order );
+            }else{
+                $order = $catalog->getOrderPurchaseUser($_SESSION['user']['id'], $args['id']);
+                $error = 'list';
+            }
+        }
+        
+        echo $this->render("catalog/payPurchase",[
+            'error'    => $error,
+            'purchase' => $purchase,
+            'order'    => $order
+        ]);
     }
     
     public function purchaseTable($param)
@@ -159,7 +285,7 @@ class catalog extends base
                             "type" => "date"
                         ],
                         "date_stop"  => [
-                            "name" => "Дата создания",
+                            "name" => "Дата стопа",
                             "type" => "date"
                         ],
                         "active"       => [
@@ -168,6 +294,65 @@ class catalog extends base
                         ]
                 ]]), 
             ""
+        );
+    }
+    
+    public function ordersTable($param)
+    {
+        $widget  = new widget();
+        $catalog = new \app\model\catalog();
+        $data    = $catalog->getDataOrders($param);
+        
+        return $widget->tableAndFilter(
+            $widget->tableByFilter(
+                $data,
+                [
+                    'title'  => '/Заказы',
+                    'add'    => '/admin/catalog/editOrder',
+                    'edit'   => "/admin/catalog/editOrder",
+                    //'delete' => "/admin/catalog/deleteOrder",
+                    "labels" => [
+                        "id"               => "id",
+                        "purchase"         => "#",
+                        "purchase_name"    => "Закупка",
+                        "summ"             => "Сумма",
+                        "user_surname"     => "Фамиля",
+                        "user_name"        => "Имя",
+                        "user_secondname"  => "Отчество",
+                        "date" => [
+                            "name" => "Создан",
+                            "type" => "date"
+                        ],
+                        "date_change" => [
+                            "name" => "Изменён",
+                            "type" => "date"
+                        ],
+                        "status" => [
+                            "name" => "Статус",
+                            "type" => "select",
+                            "data" => $catalog->orderStatuses
+                        ]
+                    ]
+                ]
+            ), 
+            $widget->createFilter([
+                'purchase' => [
+                    'type' => 'select',
+                    'name' => 'Закупка',
+                    'list' => $catalog->getListPurchases()
+                ],
+                'summ' => [
+                    "type" => "text",
+                    "name" => "Сумма"
+                ]
+            ],
+            [
+                'id'            => 'ID',
+                'purchase_name' => "Закупка",
+                'date'          => "Создан",
+                'date_change'   => "Изменён"
+            ],
+            $param)
         );
     }
     
@@ -272,7 +457,8 @@ class catalog extends base
             "users"     => $users->getOrganizators(),
             "tags"      => $catalog->getTags(),
             "discounts" => $catalog->getDiscounts(),
-            "options"   => $catalog->getOptions()
+            "options"   => $catalog->getOptions(),
+            "statuses"  => $catalog->statuses
         ]);
     }
     
@@ -469,5 +655,85 @@ class catalog extends base
     {
         $catalog = new \app\model\catalog();
         $catalog->deleteObject('discount', $send['send']['id']);
+    }
+    
+    public function deleteOrderItem($args, $send)
+    {
+        $basket = new \app\model\basket();
+        $basket->deleteOrderItem($send['stock'], $send['param']);
+        return ['stat'=>1];
+    }
+    
+    public function orderChange($args, $send)
+    {
+        $basket = new \app\model\basket();
+        $basket->orderChange($send['stock'], $send['param'], $send['change']);
+        return ['stat'=>1];
+    }
+    
+    public function orderCreate($args, $send)
+    {
+        $basket  = new \app\model\basket();
+        $list    = $basket->getList();
+        $catalog = new \app\model\catalog();
+        
+        $stocks = $catalog->getListForBasket(array_keys($list));
+        
+        $groupped  = $catalog->calcedBasketItems($stocks, $list); 
+        
+        $group = $groupped[ $send['id'] ];
+        
+        if($group['purchase']['status'] == 'cansel' || $group['purchase']['active'] == 0){
+            throw new \Exception("Ошибка! Закупка неактивна!");
+        }
+        
+        foreach($group['list'] as $item){
+            $catalog->addToOrder(
+                $item['stock']['id'], 
+                $group['purchase']['id'],
+                $item['count'], 
+                $basket->calcSummItem($item['stock'], $item['count'], $group['purchase'], $group['total']),
+                $item['param']['size'],
+                $item['param']['color'],
+                $_SESSION['user']['id']
+            );
+            $basket->orderChange($item['stock']['id'], $item['param'], -1 * $item['count']);
+        }
+        
+        $basket->saveBasket();
+        
+        return [
+            'stat' => 1
+        ];
+    }
+    
+    public function canselOrder($args, $send)
+    {
+        $basket  = new \app\model\basket();
+        $catalog = new \app\model\catalog();
+        
+        $ordered  = $catalog->getOrderedList($_SESSION['user'], $send['id']); 
+        
+        $ids = [];
+        foreach($ordered as $order){
+            $ids[ $order['stock'] ] = $order['stock'];
+        }
+        $stocks    = $catalog->getListForBasket($ids);
+        $groupped  = $catalog->calcOrderGroup($stocks, $ordered); 
+        $group     = $groupped[ $send['id'] ];
+        
+        foreach($group['list'] as $item){
+            $basket->orderChange($item['stock']['id'], [
+                'color' => $item['color'],
+                'size'  => $item['size']
+            ], $item['count']);
+        }
+        
+        $basket->saveBasket();
+        
+        $catalog->deleteOrderItemsPurchase($send['id'], $_SESSION['user']);
+        
+        return ['stat'=>1];
+        //return $send['id'];
     }
 }

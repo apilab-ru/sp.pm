@@ -13,14 +13,14 @@
         <div class="main-head__right-col">
             <div class="auth-box">
                 {if $user}
-                    <a href="/cabinet/" class="button yellow"> Личный кабинет </a>
+                    <a href="/cabinet/" class="button yellow top"> Личный кабинет </a>
                     {if $user.type == 'admin'}
-                    <a href="/admin/" class="button yellow"> Админпанель </a>
+                    <a href="/admin/" class="button yellow top"> Админпанель </a>
                     {/if}
-                    <a class="js-auth-out button yellow"> Выйти </a>
+                    <a class="js-auth-out button yellow top"> Выйти </a>
                 {else}
-                    <a class="js-reg button yellow"> Регистрация </a>
-                    <a class="js-auth-in button yellow"> Вход </a>
+                    <a class="js-reg button yellow top"> Регистрация </a>
+                    <a class="js-auth-in button yellow top"> Вход </a>
                 {/if}
             </div>
             <a class="basket-box" href="/order/">
@@ -97,15 +97,15 @@
                     <div itemprop="name">Бутичок</div>
                     <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
                       Адрес:
-                      <span itemprop="streetAddress">Льва Толстого, 16</span>
-                      <span itemprop="postalCode"> 119021</span>&nbsp;
-                      <span itemprop="addressLocality">Москва</span>
+                      <span itemprop="streetAddress">ул. Южная, 16, кв. 13</span>
+                      <span itemprop="postalCode"> 446403</span>&nbsp;
+                      <span itemprop="addressLocality">Самарская область, Кинельский район, п. Кинельский</span>
                     </div>
                 </div>
                 <div class="footer-contacts__contacts">
-                    Телефон:<span itemprop="telephone">+7 495 739–70–00</span>,<br>
-                    Факс:<span itemprop="faxNumber">+7 495 739–70–70</span>,<br>
-                    Электронная почта: <span itemprop="email">pr@yandex-team.ru</span>
+                    Телефон:<span itemprop="telephone">+7 927 703-05-00</span>,<br>
+                    {*Факс:<span itemprop="faxNumber">+7 495 739–70–70</span>,<br>*}
+                    Электронная почта: <span itemprop="email">zhekakinel81@mail.ru</span>
                 </div>
             </div>
         </div>

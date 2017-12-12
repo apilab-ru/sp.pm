@@ -36,7 +36,9 @@ var auth = new function(){
         self.post('auth','out')
             .then(function(){
                 location.reload();
-            })
+            }).catch((e)=>{
+                popUp(e,'error');
+            });
     }
     
     this.auth = function(myb, event){

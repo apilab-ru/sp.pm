@@ -63,4 +63,47 @@ var basket = new function()
     {
         $('.basket-count').html(count);
     }
+    
+    this.orderChange = function(stock, param, change, myb){
+        var $loader = self.loader( myb );
+        self.post('catalog','orderChange',{
+            stock  : stock,
+            param  : param,
+            change : change
+        }).then((stat)=>{
+            if(stat.stat){
+                navigation.reload();
+            }else{
+                throw(stat.error);
+            }
+        })
+        .catch((e)=>{
+            if(!e){
+               e = "Ошибка, попробуйте позже"; 
+            }
+            popUp(e,'error');
+            $loader.remove();
+        })
+    }
+    
+    this.orderDeleteItem = function(stock, param, myb){
+        var $loader = self.loader( myb );
+        self.post('catalog','deleteOrderItem',{
+            stock  : stock,
+            param  : param
+        }).then((stat)=>{
+            if(stat.stat){
+                navigation.reload();
+            }else{
+                throw(stat.error);
+            }
+        })
+        .catch((e)=>{
+            if(!e || $.type(e) != 'string'){
+               e = "Ошибка, попробуйте позже"; 
+            }
+            popUp(e,'error');
+            $loader.remove();
+        })
+    }
 }

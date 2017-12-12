@@ -12,6 +12,7 @@ class widget extends base
      *      page  => page, // Текущая страница
      *      count => count //Общее число записей
      *      func  => func // JS функция обработчик клика
+      *     link  => string // link to next page ?page=
      *  ]
      *  return $html;
      */
@@ -57,6 +58,19 @@ class widget extends base
         ])
      */
     
+    public function prepeareLink($link)
+    {
+        $link = preg_replace("/([&?]page=[0-9]*)/", '', $link);
+        
+        if(strpos($link, "?") === FALSE){
+            $link.= "?";
+        }else{
+            $link .= "&";
+        }
+        $link .=  "page";
+        return $link;
+    }
+    
     public function tableByFilter($data, $set)
     {
         $set['list']  = $data['list'];
@@ -67,7 +81,7 @@ class widget extends base
         if(!strpos($link, "?")){
             $link .= "?filter";
         }
-        $set['link']  = preg_replace("/(&page=[0-9]*)/", '', $link) . "&page";
+        $set['link']  = $this->prepeareLink($link);
         $set['link']  = str_replace("ajax/", "", $set['link']);
         
         return $this->render('widget/tableByFilter',$set);

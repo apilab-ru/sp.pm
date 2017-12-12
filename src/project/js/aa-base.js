@@ -155,6 +155,9 @@
    
 }
 
-function popUp(text){
+function popUp(text, mode){
+    if(!text){
+        text = "Ошибка";
+    }
     alert(text);
 }

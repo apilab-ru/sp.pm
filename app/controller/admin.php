@@ -27,13 +27,14 @@ class admin extends base
             ]
         ],
         "catalog" => [
-            "name" => "Закупки",
+            "name" => "Каталог",
             "list" => [
                 "purchaseTable"   => ["name" => "Список закупок"],
                 "stockTable"      => ["name" => "Товары закупок"],
                 "catsEdit"        => ["name" => "Категории"],
                 "tagsTable"       => ["name" => "Теги"],
-                "discountsTable"  => ["name" => "Акции"]
+                "discountsTable"  => ["name" => "Акции"],
+                "ordersTable"     => ["name" => "Заказы"]
             ]
         ],
         "main" => [

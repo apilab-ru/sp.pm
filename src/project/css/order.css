@@ -22,6 +22,7 @@
     border: 2px dashed rgba(242, 213, 68, 1);
     padding: 2px;
     margin-bottom: 30px;
+    position: relative;
 }
 .order__line-highlight{
     background: #fcf2bf;
@@ -84,18 +85,42 @@
 }
 .order__count-block{
     display: flex;
-    
+    margin-top: 15px;
+    justify-content: center;
 }
 .order__count-input{
     width: 30px;
     font-size: 20px;
-    padding: 7px;
-    border:1px solid rgb(242, 213, 68);
+    padding: 5px 5px;
+    border: 2px solid rgb(242, 213, 68);
+    text-align: center;
+    background: #fff;
 }
 .order__count-change{
-    font-size: 20px;
+    font-size: 32px;
     cursor: pointer;
-    flex:1;
-    margin-right: 5px;
+    flex: 1;
+    margin: 5px;
     justify-content: center;
+    text-align: center;
+    font-family: monospace;
+    line-height: 20px;
+    color: rgb(242, 213, 68);
+}
+.order__stop-time{
+    margin-left: 10px;
+    color: #ED1566;
+    font-weight: bold;
+}
+.order-info__box{
+    margin: 20px 0;
+}
+.order-info__req-info{
+    padding: 20px;
+}
+.form-pay-notice{
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
 }

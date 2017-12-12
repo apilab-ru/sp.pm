@@ -34,6 +34,9 @@
                             {/foreach}
                         </select>
                     {/if}
+                    {if $item.type == 'text'}
+                        <input type='text' name='{$key}' value='{$filter[$key]}'/>
+                    {/if}
                 </div>
             </div> 
         {/foreach}

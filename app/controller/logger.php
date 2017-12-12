@@ -13,4 +13,9 @@ class logger extends base{
         ]);
     }
     
+    public function clear()
+    {
+        (new \app\model\log())->clearTable();
+    }
+    
 }

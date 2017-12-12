@@ -1,5 +1,8 @@
 {strip}
     <div class="tableBox">
+        <div class="table-toolbar">
+            <button onclick="log.clear()" class="btn btn-success"> Очистить </button>
+        </div>
         <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
             <thead>
             <th> Дата </th>
@@ -8,7 +11,7 @@
             </thead>
             {foreach from=$list item=item}
                 <tr class="gradeX">
-                    <td> {$item.date_create} </td>
+                    <td> {$item.time} </td>
                     <td> {$item.name} </td>
                     <td>
                         <pre>

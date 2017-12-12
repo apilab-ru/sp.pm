@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing;
  
 $request = Request::createFromGlobals();
-$routes = include __DIR__.'/webroot.php';
+$routes = include __DIR__.'/app/webroot.php';
  
 $context = new Routing\RequestContext();
 $context->fromRequest($request);

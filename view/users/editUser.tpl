@@ -45,9 +45,15 @@
                             <div class="control-group">
                                 <label class="control-label"> Дата Регистрации </label>
                                 <div class="controls">
-                                    <input type="text" name="form[date_reg]" value="{$object.date_reg|default:$smarty.now|date:"Y-m-d H:i:s"}"/>
+                                    <input type="datetime-local" name="form[date_reg]" value="{$object.date_reg|default:$smarty.now|date:"Y-m-d\TH:i"}"/>
                                 </div>
-                            </div>   
+                            </div> 
+                            <div class="control-group">
+                                <label class="control-label"> Реквизиты </label>
+                                <div class="controls">
+                                    <input type="text" name="form[requsites]" value="{$object.requsites}"/>
+                                </div>
+                            </div>
                         </div>     
                         <div class="flexRow">
                             <div class="control-group">

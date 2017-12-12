@@ -9,4 +9,8 @@ class log extends base
         return $this->db->select("select * from log order by id DESC limit 30");
     }
     
+    public function clearTable()
+    {
+        $this->db->query("DELETE from log");
+    }
 }

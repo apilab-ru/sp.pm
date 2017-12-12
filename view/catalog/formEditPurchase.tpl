@@ -41,6 +41,18 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="control-group">
+                                <label class="control-label">Статус </label>
+                                <div class="controls">
+                                    <select name="form[status]">
+                                        {foreach from=$statuses item=item key=key}
+                                            <option {if $object.status == $key}selected{/if} value="{$key}"> 
+                                                {$item} 
+                                            </option>
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div> 
                         </div>     
                         <div class="flexRow">
                             <div class="control-group">
@@ -66,7 +78,13 @@
                                         {/foreach}
                                     </select>
                                 </div>
-                            </div>      
+                            </div> 
+                            <div class="control-group">
+                                <label class="control-label">Дата стопа </label>
+                                <div class="controls">
+                                     <input type="datetime-local" name="form[date_stop]" value="{if $object.date_stop}{$object.date_stop|date:"Y-m-d\TH:i"}{/if}"/>
+                                </div>
+                            </div> 
                         </div>
                     </div>
                     <div class="flexRow">

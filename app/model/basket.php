@@ -12,8 +12,54 @@ class basket extends base
         }else{
             $this->card = $this->getCard();
         }
-        
         //register_shutdown_function([$this,"saveBasket"]);
+    }
+    
+    public function deleteOrderItem($stock, $param)
+    {
+        $param = $this->toStringParam($param);
+        
+        foreach($this->card[$stock]['param'] as $key=>$pr){
+            
+            $pr = $this->toStringParam($pr);
+            
+            if($pr == $param){
+                unset($this->card[$stock]['param'][$key]);
+                $this->card[$stock]['count'] --;
+            }
+        }
+        if($this->card[$stock]['count'] < 1){
+            unset($this->card[$stock]);
+        }
+        $this->saveBasket();
+    }
+    
+    public function orderChange($stock, $param, $change)
+    {
+        if($change > 0){
+            for($i=0; $i<$change; $i++){
+                $this->card[$stock]['param'][] = $param;
+                $this->card[$stock]['count'] ++;
+            }
+        }else{
+            $param = $this->toStringParam($param);
+            $minus = 0;
+            foreach($this->card[$stock]['param'] as $key=>$pr){
+                $pr = $this->toStringParam($pr);
+                if($pr == $param){
+                    unset($this->card[$stock]['param'][$key]);
+                    $this->card[$stock]['count'] --;
+                    $minus --;
+                    if($minus == $change){
+                        break;
+                    }
+                }
+            }
+        }
+        if($this->card[$stock]['count'] < 1){
+            unset($this->card[$stock]);
+        }
+        $this->saveBasket();
     }
     
     public function getCard()
@@ -53,10 +99,10 @@ class basket extends base
         }else{
             if($this->card[$stock]['count'] > $count){
                 
-                $p = json_encode($param);
+                $p =  $this->toStringParam($param);
                 $find = 0;
                 foreach($this->card[$stock]['param'] as $key=>$pp){
-                    if(json_encode($pp) == $p){
+                    if($this->toStringParam($pp) == $p){
                         $find = 1;
                         unset($this->card[$stock]['param'][$key]);
                         $this->card[$stock]['param'] = array_values($this->card[$stock]['param']);
@@ -135,5 +181,37 @@ class basket extends base
     public function getList()
     {
         return $this->card;
+    }
+    
+    public function calcSummItem($stock, $count, $purchase, $total)
+    {
+        $sbor = $purchase['sbor'];
+        //Акция при покупке в первые 3 часа
+        if($purchase['discounts'][2]){
+            if(time() - strtotime($purchase['date_create']) < 10800){
+                if($sbor > 12){
+                    $sbor = 12;
+                }
+            }
+        }
+        //Акция при покупке больше 3000руб
+        if($purchase['discounts'][1] && $total>=3000){
+            if($sbor > 10){
+                $sbor = 10;
+            }
+        }
+        
+        $sum = $stock['price'] * $count;
+        $sum += ($sum * ($sbor/100));
+        return $sum;
+    }
+    
+    public function toStringParam($param)
+    {
+        if(!$param || (!$param['size'] && !$param['color'])){
+            return null;
+        }else{
+            return json_encode($param);
+        }
     }
 }

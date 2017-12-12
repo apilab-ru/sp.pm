@@ -74,6 +74,10 @@ class users extends base
         "secondname" =>"string",
         "type"       => ["simple","organizator","admin"],
         "birthday"   => "date",
+        "city"       => "int",
+        "adress"     => "string",
+        "requsites"  => "string",
+        "last_num"   => "string",
         "date_reg"   => "datetime"
     ];
 

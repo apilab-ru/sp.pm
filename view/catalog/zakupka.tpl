@@ -67,7 +67,7 @@
                     Профиль организатора
                 </a>
                 {if $user}
-                <a class="main-info__link-item main-info__link">
+                <a href="/messages/user/{$organizator.id}/" class="main-info__link-item main-info__link">
                     Написать сообщение
                 </a>
                 <label class="checkbox">
@@ -92,7 +92,7 @@
                     <span class="long-defis"></span>
                     <input name="price_to" class="c-top-filter__range-value"/>
                 </div>
-                <button class="yellow-button"> Искать </button>
+                <button class="button yellow"> Искать </button>
             </form>
             <div class="p-catalog__box js-catalog-content"></div>
         </div>

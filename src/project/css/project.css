@@ -41,18 +41,19 @@ html{
 .basket-box{
     
 }
-.button{
+.button.top{
     display: inline-block;
     cursor: pointer;
     font-size: 16px;
+    font-weight: normal;
 }
-.button.yellow{
+.button.top.yellow{
     background-color: rgba(250, 230, 127, 1);
     border: solid rgba(113, 69, 2, 0.5) 1px;
     transition:color 0.4s ease 0s;
     color: #590725;
 }
-.button.yellow:hover{
+.button.top.yellow:hover{
     background-color: rgba(171, 156, 19, 1);
     border-color: transparent;
     color: #FFFFFF;
@@ -368,24 +369,64 @@ html{
     height: calc(100% - 2px);
 }
 
-.yellow-button{
+.button{
     font-weight: bold;
-    color: #fff;
-    background: #f2d544;
     font-size: 14px;
     padding: 7px 15px;
     border:none;
     cursor: pointer;
     display: flex;
     align-items: center;
+    text-decoration: none;
 }
-.yellow-button:hover {
+.button.yellow{
+    border:none;
+    color: #fff;
+    background: #f2d544;
+}
+.button.yellow:hover {
     background: #d4ba36;
 }
-
+.button.green{
+    color: #fff;
+    border:none;
+    background: #33e04a;
+}
+.button.green:hover {
+    background: #29c33e;
+}
+.button.red{
+    color: #fff;
+    border:none;
+    background: #fd9475;
+}
+.button.red:hover {
+    background: #e03b3b;
+}
 .flex-end{
     justify-content: flex-end;
 }
 a{
     color: #2b6ca3;
+}
+.subnavigation__box{
+    align-content: center;
+}
+.subnavigation__box .main-info__link-item{
+    margin-bottom: 0px;
+}
+.subnavigation__title {
+    padding: 0px 20px;
+    display: flex;
+    align-items: center;
+}
+.margin-right-auto{
+    margin-right: auto;
+}
+pre{
+    margin-top: 0px;
+    padding-top: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 100%;
 }

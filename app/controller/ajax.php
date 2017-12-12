@@ -37,6 +37,8 @@ class ajax extends base{
             ];
         }
         
+        dlog('res', $res);
+        
         if($send['ja']){
             echo $html;
             if(!$res && $html){

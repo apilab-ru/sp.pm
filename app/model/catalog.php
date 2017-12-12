@@ -4,7 +4,20 @@ namespace app\model;
 
 class catalog extends base
 {
+    public $orderStatuses = [
+        'create'   => "Создан", 
+        'check'    => "Отмечен что оплачен", 
+        'verifed'  => "Оплачен" ,
+        'complete' => "Завершен"
+    ];
     
+    public $statuses = [
+        'start'   => 'Старт',
+        'cansel'  => 'Отменена',
+        'stop'    => 'Стоп',
+        'restart' => 'Дозаказ'
+    ];
+
     public function getMainList()
     {
         $list = $this->db->select("select *,id as ARRAY_KEY from cats where parent=0");
@@ -196,10 +209,84 @@ class catalog extends base
         ];
     }
     
+    public $ordersFilter = [
+        'limit'      => 10,
+        'page'       => 1,
+        'order'      => 'o.id',
+        'order_type' => 'DESC'
+    ]; 
+    public function getDataOrders($params)
+    {
+        $filter = $this->setFilter($this->ordersFilter, $params);
+        $sql = "select SQL_CALC_FOUND_ROWS o.*,u.name as user_name, u.surname as user_surname, u.secondname as user_secondame, p.name as purchase_name"
+                . " from orders as o, users as u, purchase as p"
+                . " where p.id = o.purchase && u.id = o.user ";
+        
+        $page  = intval($filter['page']);
+        $limit = intval($filter['limit']);
+        
+        if($filter['purchase']){
+            $p = intval($filter['purchase']);
+            $sql .= " && o.purchase=$p";
+        }
+        
+        if($filter['summ']){
+            $p = floatval($filter['summ']);
+            $sql .= " && o.summ=$p";
+        }
+        
+        if($filter['user']){
+            $p = intval($filter['user']);
+            $sql .= " && o.user=$p";
+        }
+        
+        if($filter['orderid']){
+            $p = intval($filter['orderid']);
+            $sql .= " && o.id = $p";
+        }
+        
+        if($filter['notcomplete']){
+            $sql .= " && o.status != 'complete'";
+        }
+        
+        if($filter['status'] && $this->orderStatuses[$filter['status']]){
+            $sql .= " && o.status='{$filter['status']}'";
+        }
+        
+        $sql .= $this->createOrder($filter['order'], $filter['order_type']);
+        
+        $sql .= $this->createLimit($page, $limit);
+        
+        $list = $this->db->select($sql);
+        
+        return [
+            'list'  => $list,
+            'count' => $this->getCount(),
+            'page'  => $page,
+            'limit' => $limit
+        ];
+        
+    }
+    
     public function getPurchase($id)
     {
         $row = $this->db->selectRow("select * from purchase where id=?d", $id);
         return $row;
+    }
+    
+    public function getSborPurchase($id)
+    {
+        return $this->db->selectCell("select value_percent from purchase_values where purchase=?d && option_id=3",$id);
+    }
+    
+    public function getPurchaseInfo($id)
+    {
+        $users                 = new \app\model\users();
+        $purchase              = $this->getPurchase($id);
+        $purchase['discounts'] = $this->getPurchaseDiscount($id);
+        $purchase['user']      = $users->getUser($purchase['user']);
+        $purchase['sbor']      = $this->getSborPurchase($id);
+        return $purchase;
     }
     
     public function addPurchaseToFavorite($purchase, $user)
@@ -332,14 +419,14 @@ class catalog extends base
         ];
     }
     
-    public function getListForBasket($list)
+    public function getListForBasket($ids)
     {
-        $stocks = $this->db->select("select s.*, s.id as ARRAY_KEY from stock as s where s.id in(?a)", array_keys($list));
+        $stocks = $this->db->select("select s.*, s.id as ARRAY_KEY from stock as s where s.id in(?a)", $ids);
         foreach($stocks as $key=>$stock){
             $stocks[$key]['sizes'] = json_decode($stocks[$key]['sizes'],1);
             $stocks[$key]['colors'] = json_decode($stocks[$key]['colors'],1);
         }
-        $images = $this->db->select("select * from images where parent='stock' && parent_id in (?a)", array_keys($list));
+        $images = $this->db->select("select * from images where parent='stock' && parent_id in (?a)", $ids);
         foreach($images as $img){
             $stocks[$img['parent_id']]['img'][] = $img;
         }
@@ -351,6 +438,9 @@ class catalog extends base
     {
         $groupped = [];
         $pids = [];
+        
+        $basket = new basket();
+        
         foreach($list as $key=>$set){
             if($stocks[$key]){
                 
@@ -359,7 +449,7 @@ class catalog extends base
                 $pids[ $pkey ] = $pkey;
                 
                 foreach($set['param'] as $param){
-                    $paramKey = $key . json_encode($param);
+                    $paramKey = $key . $basket->toStringParam($param);
                     $groupped[ $pkey ]['list'][$paramKey]['stock'] = $stocks[$key];
                     $groupped[ $pkey ]['list'][$paramKey]['count'] ++;
                     $groupped[ $pkey ]['list'][$paramKey]['summ'] = $groupped[ $pkey ]['list'][$paramKey]['count'] * $stocks[$key]['price'];
@@ -369,12 +459,11 @@ class catalog extends base
             }
         }
         
-        $purchases = $this->getListPurchases(array_keys($pids), true);
+        $purchases = array();
         
-        $users = new \app\model\users();
-        
-        foreach($purchases as $id=>$purchase){
-            $purchases[$id]['user'] = $users->getUser($purchase['user']);
+        foreach($pids as $id){
+            $purchase         = $this->getPurchaseInfo($id);
+            $purchases[$id]   = $purchase;
         }
         
         foreach($groupped as $pur=>$pdata){
@@ -387,6 +476,27 @@ class catalog extends base
                 $total += $groupped[$pur]['list'][$key]['itog'];
             }
             $groupped[$pur]['total'] = $total;
+        }
+        
+        return $groupped;
+    }
+    
+    public function calcOrderGroup($stocks, $list)
+    {
+        $groupped = [];
+        foreach($list as $item){
+            $stock = $stocks[$item['stock']];
+            $pr    = $stock['purchase'];
+            $item['stock'] = $stock;
+            $groupped[$pr]['list'][] = $item;
+        }
+        
+        foreach($groupped as $pd=>$group){
+            $groupped[$pd]['purchase'] = $this->getPurchaseInfo($pd);
+            $groupped[$pd]['total'] = 0;
+            foreach($group['list'] as $item){
+                $groupped[$pd]['total'] += $item['summ'];
+            }
         }
         
         return $groupped;
@@ -482,7 +592,7 @@ class catalog extends base
         $sql = "select p.id,p.id as ARRAY_KEY,p.name ";
         
         if($sbor){
-            $sql .= ",v.value_percent as sbor, p.user ";
+            $sql .= ",v.value_percent as sbor, p.user, p.status, p.date_stop ";
         }
         
         $sql .= "from purchase as p ";
@@ -572,5 +682,81 @@ class catalog extends base
     public function getTag($id)
     {
         return $this->db->selectRow("select * from tags where id=?d",$id);
+    }
+    
+    public function addToOrder($stock, $purchase, $count, $sum, $color, $size, $user, $orderId=null)
+    {
+        $sql = "INSERT INTO `basket_stocks`(`stock`,`purchase`, `count`, `summ`, `color`, `size`, `user`, `order_id`) VALUES ";
+        $stock = (int)$stock;
+        $count = (int)$count;
+        $purchase = (int)$purchase;
+        $sum   = floatval($sum);
+        $color = ($color) ? ("'". $this->db->escape($color) ."'") : "NULL";
+        $size  = ($size) ? ("'". $this->db->escape($size) ."'") : "NULL";
+        $user  = intval($user);
+        $orderId = (int)$orderId;
+        $sql .= "($stock, $purchase, $count, $sum, $color, $size, $user, $orderId)";
+        $id = $this->db->query($sql);
+        if(!$id){
+            dlog('error sql', $sql);
+            throw new \Exception("Ошибка оформления заказа");
+        }
+        return $id;
+    }
+    
+    public function getOrderedList($user, $purchase=null, $order=0)
+    {
+        return $this->db->select("select *,id as ARRAY_KEY from basket_stocks where user=?d {&& purchase=?d} && order_id=?d", $user, ($purchase) ? $purchase : DBSIMPLE_SKIP, $order);
+    }
+    
+    public function deleteOrderItemsPurchase($purchase, $user)
+    {
+        $this->db->query("DELETE from basket_stocks where user=?d && purchase=?d", $user, $purchase);
+    }
+    
+    public function calcSummList($list)
+    {
+        $total = 0;
+        foreach($list as $item){
+            $total += $item['summ'];
+        }
+        return $total;
+    }
+    
+    public function addOrder($user, $purchase, $total)
+    {
+        $id =  $this->db->insert('orders',[
+            'user'     => $user,
+            'summ'     => $total,
+            'purchase' => $purchase
+        ]);
+        
+        $notice = new \app\controller\notice();
+        $notice->createOrder($user, $id, $total);
+        
+        return $id;
+    }
+    
+    public function addBasketStockToOrder($ids, $order)
+    {
+        $this->db->query("UPDATE basket_stocks SET order_id=?d where id in(?a)", $order, $ids);
+    }
+    
+    public function getOrderPurchaseUser($user, $purchase)
+    {
+        return $this->db->selectCell("select id from orders where user=?d && purchase=?d", $user, $purchase);
+    }
+    
+    public function getOrder($id)
+    {
+        return $this->db->selectRow("select * from orders where id=?d",$id);
+    }
+    
+    public function setStatusOrder($order, $status)
+    {
+        $this->db->update('orders',[
+            'status'      => $status,
+            'date_change' => date("Y-m-d H:i:s")
+        ], $order);
     }
 }

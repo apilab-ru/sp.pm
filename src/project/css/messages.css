@@ -1,0 +1,15 @@
+.messages__submenu{
+    width: 180px;
+    margin-right: 20px;
+}
+.message-single{
+    padding:  50px;
+}
+.message {
+    padding: 9px 12px;
+    border: 1px solid #ece8e8;
+    border-radius: 4px;
+}
+.message.error {
+    background: #ffd1d1;
+}

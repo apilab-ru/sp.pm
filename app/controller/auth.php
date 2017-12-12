@@ -35,7 +35,8 @@ class auth extends base
     public function out()
     {
         $auth = new \app\model\auth();
-        $auth->out();
+        unset($_SESSION['user']);
+        //$auth->out();
         return [
             'stat'  => 1
         ];
