@@ -316,7 +316,6 @@ class catalog extends base
     
     public function getPurchaseTags($purchase)
     {
-        $this->db->setLogger();
         return $this->db->select("select t.*,t.id as ARRAY_KEY from tags as t, purchase_tag as pt where t.id = pt.tag && pt.purchase=?d",$purchase);
     }
     

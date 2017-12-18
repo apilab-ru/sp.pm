@@ -54,6 +54,20 @@
                                 </div>
                             </div> 
                         </div>
+                        <div>
+                            <div class="control-group">
+                                <label class="control-label">Выводить на главной </label>
+                                <input type="hidden" name="form[show_main]" value="0"/>
+                                <div class="controls">
+                                    <div class="center">
+                                        <label class="itemInput">
+                                            <input type="checkbox" name="form[show_main]" value="1" {if $object.show_main}checked="true"{/if}>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Текст </label>

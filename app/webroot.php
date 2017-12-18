@@ -26,6 +26,7 @@ $routes->add("orderCreate", new Routing\Route("/order/create/{stock}/", $w->crea
 
 
 $routes->add('messagesUser', new Routing\Route('/messages/user/{id}/',  $w->create('messages', 'user', true)));
+$routes->add('messagesServer', new Routing\Route('/messages/server/',  $w->create('messages', 'server', false)));
 $routes->add('messagesDialogs', new Routing\Route('/messages/dialogs/',  $w->create('messages', 'dialogs', true)));
 $routes->add('messagesNotices', new Routing\Route('/messages/notices/',  $w->create('messages', 'notices', true)));
 

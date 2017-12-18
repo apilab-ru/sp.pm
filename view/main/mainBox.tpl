@@ -14,7 +14,7 @@
         <div class='main-catalog__list'>
             {foreach from=$cats item=item}
                 <a onclick="navigation.goMenu('/catalog/?cats={$item.link}',event,'/catalog/')" class='main-catalog__item' href='/catalog/?cats={$item.link}'>
-                    <img class='main-catalog__item-logo' src="{$item.image|img:"80x80x1"}"/>
+                    <img class='main-catalog__item-logo' src="{$item.image|img:"80x80x2"}"/>
                     <div class='main-catalog__item-title'>
                         {$item.name}
                     </div>
@@ -31,21 +31,26 @@
         </article>
         <h2 class="main-info__title"> Узнайте больше </h2>
         <ul class='main-info-links'>
+            {foreach from=$links item=link}
             <li class='main-info__link-item'>
-                <a href='/' class='main-info__link'> Что такое совместные покупки? </a>
+                <a href='/faq/#{$link.link}' class='main-info__link'> {$link.name} </a>
+            </li>
+            {/foreach}
+            {*<li class='main-info__link-item'>
+                <a href='/faq/#buy' class='main-info__link'> Что такое совместные покупки? </a>
             </li>
             <li class='main-info__link-item'>
-                <a href='/' class='main-info__link'> Правила нашего сайта </a>
+                <a href='/faq/#rules' class='main-info__link'> Правила нашего сайта </a>
             </li>
             <li class='main-info__link-item'>
-                <a href='/' class='main-info__link'> Как сделать заказ? </a>
+                <a href='/faq/#buy' class='main-info__link'> Как сделать заказ? </a>
             </li>
             <li class='main-info__link-item'>
                 <a href='/faq/#buy' class='main-info__link'> Как оплатить и получить заказ? </a>
             </li>
             <li class='main-info__link-item'>
                 <a href='/faq/#delivery' class='main-info__link'> Подробности о доставке </a>
-            </li>
+            </li>*}
         </ul>
     </div>
 </div>

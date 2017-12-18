@@ -13,3 +13,96 @@
 .message.error {
     background: #ffd1d1;
 }
+.dialog__list {
+    /*overflow: auto;*/
+}
+.messages__box {
+    flex: 1;
+    /*display: flex;*/
+    /*max-width: 553px;*/
+}
+.dialog {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 553px;
+}
+.dialog__box {
+    flex: 1;
+    max-height: 100vh;
+    overflow: auto; 
+}
+.dialog__send {
+    margin-top: auto !important;
+    margin-left: 10px;
+    margin-right: 0px !important;
+}
+.dialog__text {
+    flex: 1;
+    height: 35px;
+    border: 1px solid #F4DA53;
+    padding: 7px;
+    border-radius: 2px;
+    color: #714502;
+    line-height: 1.4em;
+}
+/*.dialog__text:focus{
+    height: 80px;
+}*/
+.dialog__form {
+    padding: 10px;
+    border: 1px solid #FAF2C2;
+    background: #fefcf1;
+}
+.dialog__message-item {
+    padding: 10px;
+    margin-bottom: 7px;
+}
+.dialog__message-item.dialog__from {
+    margin-left: 40px;
+    background: #ebf8fe;
+}
+.dialog__message-item.dialog__to {
+    margin-right: 40px;
+    background: #eef6e4;
+}
+.dialog__message-date {
+    font-size: 12px;
+    margin-right: auto;
+}
+.dialog__message-user {
+    font-size: 12px;
+}
+.dialog__message-text {
+    margin-top: 5px;
+}
+.dialogs__list-item{
+    border:1px solid #F4DA53;
+    padding: 5px;
+    border-bottom: none;
+    align-items: center;
+    color: #414141;
+    text-decoration: none;
+}
+.dialogs__list-item:last-of-type{
+    border-bottom: 1px solid #F4DA53;
+}
+.dialogs__list {
+    flex: 1;
+}
+.dialogs__not-read{
+    background: #FEF9DF;
+}
+.dialogs__list-item-name{
+    margin-left: 20px;
+}
+.dialogs__list-item-last{
+    margin-left: auto;
+}
+.dialogs__list-item-date{
+    font-size: 12px;
+}
+.dialogs__list-item-text{
+    font-size: 12px;
+    line-height: 1.5em;
+}

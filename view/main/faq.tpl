@@ -9,9 +9,9 @@
         <article class='faq-text'>
             {$item.text}
             {foreach from=$item.childNodes item=it}
-                <h3 class='faq-checkbox'>
+                <a name='{$it.link}' class='faq-checkbox'>
                     {$it.name}
-                </h3>
+                </a>
                 <div class='faq-more'>
                     {$it.text}
                 </div>

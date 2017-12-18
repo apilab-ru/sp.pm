@@ -8,7 +8,8 @@ class main extends base{
     public function main()
     {
        echo $this->render('main/mainBox', array(
-                'cats' => (new \app\model\catalog())->getMainList()
+                'cats' => (new \app\model\catalog())->getMainList(),
+                'links' => (new \app\model\arts())->getMainLinks()
             ));
     }
     
@@ -69,7 +70,7 @@ class main extends base{
     public function saveArt($send)
     {
         $arts = new \app\model\arts();
-        $id = $arts->updateobject('arts', $send['send']['form']);
+        $id = $arts->saveArt($send['send']['form']);
         if(!$id){
             $stat = ["error" => "Ошибка сохранения"];
         }else{

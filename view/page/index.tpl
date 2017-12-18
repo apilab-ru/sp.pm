@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <title>{$title}</title>
-    <link href="/build/build.css?{$smarty.now}" type="text/css" rel="stylesheet" />
+    <link href="/build/build.css?1{$smarty.now}" type="text/css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lobster|Ubuntu:400,700&amp;subset=cyrillic" rel="stylesheet">
 </head>
 <body>
@@ -23,12 +23,22 @@
                     <a class="js-auth-in button yellow top"> Вход </a>
                 {/if}
             </div>
-            <a class="basket-box" href="/order/">
-                <div class="basket-count__box">
-                    <div class='basket-count'>{$basket->calcCount()}</div>
-                </div>
-                <div class="basket-img"></div>
-            </a>
+            <div class="main__events-box">
+                <a class="basket-box" href="/order/">
+                    <div class="count-box basket-count__box">
+                        <div class="count-item basket-count">{$basket->calcCount()}</div>
+                    </div>
+                    <img src="/build/img/basket.png"/>
+                </a>
+                {if $user}
+                <a class="messages-link" href="/messages/dialogs/">
+                    <div class="count-box">
+                        <div class="count-item js-count-message">{$message.count|default:0}</div>
+                    </div>
+                    <img src="/build/img/messages.png"/>
+                </a>
+                {/if}
+            </div>
         </div>
     </header>
     <div class='auth-form__box'>
@@ -111,6 +121,17 @@
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="/build/build.js?{$smarty.now}"></script> 
+    <script src="/build/build.js?2{$smarty.now}"></script>
+    {if $message && $user}
+    <script>
+        {if $user}
+            window.userId = {$user.id};
+            window.userName = '{$user.surname} {$user.name}';
+        {/if}
+        $(function(){
+            messages.connect({$message.time});
+        });
+    </script>
+    {/if}
 </body>
 {/strip}

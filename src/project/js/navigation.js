@@ -42,12 +42,30 @@
         this.go = function(url){
             self.loader( $('.content') );
             history.pushState('navigation', 'navigation', url);
+            
+            var $menu = $('.menu-item a[href="'+ location.pathname +'"]');
+            if($menu.length){
+                $menu.parent().addClass('menu-checked');
+            }
+            
             self.send(url,{
                 page : 'ajax'
             }).then((res)=>{
                 $('.content').html(res);
-            }).catch(()=>{
+            }).catch((e)=>{
                 $('.content').html("Произошла ошибка, обновите страницу");
+            }).then(()=>{
+                if(location.hash != ''){
+                    var name = location.hash.substr(1);
+                    var link = $(`a[name="${name}"]`);
+                    if(link.length){
+                        link.click();
+                        $('html').animate({scrollTop: link.offset().top }, 400);
+                    }
+                }else{
+                    var link = $(".menu-box");
+                    $('html').animate({scrollTop: link.offset().top }, 400);
+                }
             });
         }
         
@@ -72,6 +90,10 @@ $(function(){
     $(document).on('click','a',function(event){
         var href = $(this).attr('href');
         if(href[0] == "/" && href != '/admin/'){
+            navigation.goLink(href, event);
+        }
+        if(href[0] == "?"){
+            href = location.pathname + href;
             navigation.goLink(href, event);
         }
     })

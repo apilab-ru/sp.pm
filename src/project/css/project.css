@@ -38,9 +38,7 @@ html{
     background-size: cover;
     height: 265px;
 }
-.basket-box{
-    
-}
+
 .button.top{
     display: inline-block;
     cursor: pointer;
@@ -66,12 +64,42 @@ html{
     padding: 7px;
 }
 
-.main-head__right-col .basket-box{
+.main__events-box{
     margin-top: auto;
     margin-bottom: 25px;
     margin-right: 15px;
     margin-left: auto;
+    display:flex;
+    flex-wrap:wrap;
 }
+
+.messages-link {
+    margin-left: 10px;
+    margin-top: auto;
+    position: relative;
+}
+.count-box{
+    position: absolute;
+    top: -6px;
+    left: -6px;
+}
+.count-item{
+    display: flex;
+    padding: 3px;
+    border-radius: 100%;
+    background: #EC7899;
+    color: #F9EEDD;
+    box-sizing: border-box;
+    height: 24px;
+    width: 24px;
+    justify-content: center;
+    align-items: center;
+    border:1px solid #8F6C9E;
+}
+.basket-count__box{
+   top: 7px; 
+}
+
 .menu-list{
     list-style: none;
     width: 100%;
@@ -167,7 +195,7 @@ html{
     margin-bottom: 31px;
 }
 .main-catalog__item-logo{
-    width: 80px;
+    /*width: 80px;*/
     height: 80px;
 }
 .main-catalog__item-logo g{

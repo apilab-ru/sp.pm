@@ -1,3 +1,4 @@
+"use strict";
 //npm install gulp-minify-css
 var gulp = require('gulp');
 var watch = require('gulp-watch');
@@ -11,46 +12,76 @@ var path = {
     admin : {
         css : ['src/admin/css/*.css','src/project/css/spinner.css','vendor/chosen/chosen.css','vendor/nestable/nestable.css'],
         js  : ['src/admin/js/*.js','vendor/nestable/jquery.nestable.js']
+    },
+    client : {
+        js : [
+            //'src/project/js/*.js',
+            'src/project/js/base.js',
+            'src/project/js/auth.js',
+            'src/project/js/basket.js',
+            'src/project/js/catalog.js',
+            'src/project/js/faq.js',
+            'src/project/js/messages.js',
+            'src/project/js/navigation.js',
+            'src/project/js/serialize.js',
+            'src/project/js/user.js',
+            'src/admin/js/fileUploader.js',
+            'vendor/chosen/chosen.jquery.js'
+        ],
+        worker : [
+            //'src/project/js/base.js',
+            'src/project/js/worker.js'
+        ],
+        css : ['src/project/css/*.css','vendor/chosen/chosen.css']
     }
     
 };
 
 gulp.task('css-prod', function() {
-    return gulp.src(['src/project/css/*.css','vendor/chosen/chosen.css'])
+    return gulp.src(path.client.css)
        .pipe(minifyCss())
        .pipe(concat('build.css'))
        .pipe(gulp.dest('build'));
 });
 
 gulp.task('js-prod', function() {
-    return gulp.src([
-        'src/project/js/*.js',
-        'src/admin/js/fileUploader.js',
-        'vendor/chosen/chosen.jquery.js'
-    ])
-       .pipe(minify({
-            mangle: {
-              keepClassName: true
-            }
-        }))
-       .pipe(concat('build.js'))
-       .pipe(gulp.dest('build'));
+    return [
+        gulp.src(path.client.js)
+            .pipe(minify({
+                 mangle: {
+                   keepClassName: true
+                 }
+             }))
+           .pipe(concat('build.js'))
+           .pipe(gulp.dest('build')),
+       
+       gulp.src(path.client.worker)
+            .pipe(minify({
+                 mangle: {
+                   keepClassName: true
+                 }
+             }))
+           .pipe(concat('worker.js'))
+           .pipe(gulp.dest('build'))
+    ];
 });
 
 gulp.task('css', function() {
-    return gulp.src(['src/project/css/*.css','vendor/chosen/chosen.css'])
+    return gulp.src(path.client.css)
        .pipe(concat('build.css'))
        .pipe(gulp.dest('build'));
 });
 
 gulp.task('js', function() {
-    return gulp.src([
-        'src/project/js/*.js',
-        'src/admin/js/fileUploader.js',
-        'vendor/chosen/chosen.jquery.js'
-    ])
-    .pipe(concat('build.js'))
-    .pipe(gulp.dest('build'));
+    return [
+        gulp.src(path.client.js)
+            .pipe(concat('build.js'))
+            .pipe(gulp.dest('build')),
+    
+         gulp.src(path.client.worker)
+            .pipe(concat('worker.js'))
+            .pipe(gulp.dest('build'))
+    ];
 });
 
 
@@ -114,3 +145,6 @@ gulp.task('watch', function() {
     gulp.watch("src/admin/js/*.js", ['js-admin']);
     
 });
+
+gulp.task('prod', ['js-prod','css-prod','css-admin-prod','js-admin-prod'])
+gulp.task('dev', ['js','css','css-admin','js-admin'])

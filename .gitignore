@@ -47,7 +47,7 @@ Temporary Items
 .apdisk
 build/*js
 build/*css
-cache
+cache/*php
 cachephoto
 photo
 nbproject

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "172261291cd652374beec75bfa421d0e",
+    "content-hash": "01764f94b7c78b445aaffd33d2365974",
     "packages": [
         {
             "name": "phpmailer/phpmailer",
@@ -211,7 +211,7 @@
             "description": "Symfony Routing Component",
             "homepage": "http://symfony.com",
             "time": "2013-05-06T10:48:41+00:00"
-        }
+        },
     ],
     "packages-dev": [],
     "aliases": [],

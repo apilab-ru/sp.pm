@@ -31,20 +31,19 @@ class ajax extends base{
             $res = (new $class())->{$action}($args, $send);
             $html = ob_get_clean();
         }catch(\Exception $e){
+            $html = ob_get_clean();
             $res = [
                 'stat'  => 0,
                 'error' => $e->getMessage()
             ];
         }
         
-        dlog('res', $res);
-        
         if($send['ja']){
             echo $html;
             if(!$res && $html){
                 $res = ['stat' => 1];
             }
-            echo "<ja>" . json_encode($res) . "</ja>";
+            echo "<ja>" . json_encode($res, JSON_UNESCAPED_UNICODE) . "</ja>";
         }else{
             if(!$res && $html){
                 $res = ['stat' => 1];
@@ -55,7 +54,7 @@ class ajax extends base{
 
             if($res){
                 header('Content-Type: application/json');
-                echo json_encode($res);
+                echo json_encode($res, JSON_UNESCAPED_UNICODE);
             }
         }
     }

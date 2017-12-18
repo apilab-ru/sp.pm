@@ -362,7 +362,7 @@
 .basket-box{
     position: relative;
 }
-.basket-count__box{
+/*.basket-count__box{
     position: absolute;
 }
 .basket-count{
@@ -377,7 +377,7 @@
     width: 24px;
     justify-content: center;
     align-items: center;
-}
+}*/
 .custom-select{
     width: 100%;
 }

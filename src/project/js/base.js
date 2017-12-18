@@ -1,15 +1,16 @@
 "use strict";
-;var base = new function(){
-   
-   this.serialise = function($form){
-       var form = {};
-       $form.find('input,select').each(function(n,i){
-           var $i = $(i);
-           form[ $i.attr('name') ] = $i.val();
-       })
-       return form;
-   }
-   
+;
+var base = new function () {
+
+    this.serialise = function ($form) {
+        var form = {};
+        $form.find('input,select').each(function (n, i) {
+            var $i = $(i);
+            form[ $i.attr('name') ] = $i.val();
+        })
+        return form;
+    }
+
     this.send = function (url, send) {
         return new Promise((resolve, reject) => {
             $.post(url, {
@@ -23,48 +24,48 @@
             })
         });
     }
-   
-   this.post = function (controller, action, send) {
-        if(!send){
+
+    this.post = function (controller, action, send) {
+        if (!send) {
             send = {};
         }
         //send.ja = true;
         return new Promise((resolve, reject) => {
-            this.xchr = $.post('/ajax/' + controller + "/" + action + "/",{
-                send : send
-            },function(mas){
+            this.xchr = $.post('/ajax/' + controller + "/" + action + "/", {
+                send: send
+            }, function (mas) {
                 /*var res = re.split('<ja>');
-                if (res[1] != undefined) {
-                    var text = res[0];
-                    res = res[1].split('</ja>');
-                    text += res[1];
-                    re = text;
-                    var mas = $.parseJSON(res[0]);
-                } else {
-                    var mas = re;
-                }*/
-                
-                if(mas.stat){
+                 if (res[1] != undefined) {
+                 var text = res[0];
+                 res = res[1].split('</ja>');
+                 text += res[1];
+                 re = text;
+                 var mas = $.parseJSON(res[0]);
+                 } else {
+                 var mas = re;
+                 }*/
+
+                if (mas.stat) {
                     resolve(mas);
-                }else{
+                } else {
                     reject(mas);
                 }
             })
         });
     }
-    
-    this.loader = function(box){
+
+    this.loader = function (box) {
         var $loader = $("<div class='loader__boxed'><div class='loader'></div></div>")
         $(box).append($loader);
         return $loader;
     }
-    
-    this.loaderProress = function(box)
+
+    this.loaderProress = function (box)
     {
         var $loader = $('<div class="loader__box"><div curpercent="0" class="loader__process"></div></div>');
-        
+
         var $load = $loader.find('.loader__process');
-        
+
         var loader = setInterval(function () {
             var curPerc = parseInt($load.attr('curpercent'));
             curPerc += 5;
@@ -77,12 +78,12 @@
             }
             $load.attr({'curpercent': curPerc});
         }, 500);
-        
+
         $loader.day = function () {
             clearInterval(loader);
             $load.parent().remove();
         }
-        
+
         $loader.stop = function () {
             clearInterval(loader);
             $load.css({'width': '100%'});
@@ -90,26 +91,26 @@
                 $load.remove();
             }, 1000);
         };
-        
+
         $(box).append($loader);
-        
+
         return $loader;
     }
-    
-    this.sendFile = function(url, file, send, $status){
+
+    this.sendFile = function (url, file, send, $status) {
         return new Promise((resolve, reject) => {
             var formData = new FormData();
-			formData.append('file', file);
-            
-            if(send){
-               formData.append('send', JSON.stringify(send)); 
+            formData.append('file', file);
+
+            if (send) {
+                formData.append('send', JSON.stringify(send));
             }
-            
+
             $status.show();
             var xhr = new XMLHttpRequest();
-            if($status){
+            if ($status) {
                 xhr.upload.onprogress = function (event) {
-                    var w = Math.ceil(event.loaded / event.total * 100)  + "%";
+                    var w = Math.ceil(event.loaded / event.total * 100) + "%";
                     $status.animate({width: w})
                 }
             }
@@ -117,9 +118,9 @@
             xhr.onload = xhr.onerror = function () {
                 $status.hide();
                 //console.log('response', this.response);
-                try{
+                try {
                     var res = JSON.parse(this.response);
-                }catch(e){
+                } catch (e) {
                     var res = {};
                     console.log('res', this.response);
                 }
@@ -130,33 +131,33 @@
             xhr.send(formData);
         });
     }
-    
-    this.modalWin = function(html)
+
+    this.modalWin = function (html)
     {
-        var $back = $("<div>",{
-            class : "backModal"
+        var $back = $("<div>", {
+            class: "backModal"
         });
-        
-        var $div = $('<div/>',{
-            class : 'modal-win'
+
+        var $div = $('<div/>', {
+            class: 'modal-win'
         })
-        
+
         $div.append("<span class='reg-auth-close'>X</span>");
         $div.append(html);
-        
-        $back.append( $div ); 
-        
-        $back.on('click','.reg-auth-close',function(){
+
+        $back.append($div);
+
+        $back.on('click', '.reg-auth-close', function () {
             $back.remove();
         })
-       
+
         $('body').append($back);
     }
-   
+
 }
 
-function popUp(text, mode){
-    if(!text){
+function popUp(text, mode) {
+    if (!text) {
         text = "Ошибка";
     }
     alert(text);
