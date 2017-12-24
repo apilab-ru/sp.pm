@@ -40,11 +40,16 @@ class admin extends base
         "main" => [
             "name" => "Статьи",
             "list" => [
-                "editFaq" => ["name" => "Редактирование FAQ"]
-                //"editFaqStruct" => ["name" => "Структура FAQ"],
-                //"editFaqArts"   => ["name" => "Статьи FAQ"]
+                "editFaq"       => ["name" => "Редактирование FAQ"],
+                 "listDelivery" => ["name" => "Список адресов доставки" ]
             ]
-        ]
+        ],
+        "notice" => [
+            "name" => "Уведомления",
+            "list" => [
+                "editAccount" => ["name" => "Редактирование Почты"]
+            ]
+        ],
     ];
     
     public function getMenu($args=null)

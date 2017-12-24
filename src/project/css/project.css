@@ -363,6 +363,20 @@ html{
     display: table;
 }
 
+.modal-win-box{
+    max-width: 800px;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 5px;
+}
+.modal-win__img-box {
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+    border-radius: 10px;
+}
+.modal-win__img-box img{
+    max-width:100%;
+}
 .art-title {
     font-size: 20px;
     color: #414141;
@@ -457,4 +471,12 @@ pre{
     padding-left: 10px;
     padding-right: 10px;
     max-width: 100%;
+}
+.main-user-name{
+    padding: 5px;
+    background: #ffffff69;
+    text-align: center;
+    font-size: 12px;
+    text-shadow: 0px 0px 1px #9a5d01;
+    color: #fefdc5;
 }

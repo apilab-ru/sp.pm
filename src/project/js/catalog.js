@@ -63,10 +63,11 @@ var catalog = new function(){
         self.purchaseReload();
     }
     
-    this.purchaseReload = function()
+    this.purchaseReload = function(page)
     {
         var send = {
-            purchase : window.initPurchase
+            purchase : window.initPurchase,
+            page     : (page) ? page : 1
         };
         $('.js-catalog-filter input').each(function(n,i){
             send[ $(i).attr('name') ] = $(i).val();
@@ -89,6 +90,15 @@ var catalog = new function(){
         });
     }
     
+    this.setPageStock = function(purchase)
+    {
+        return function(page,event){
+            event.preventDefault();
+            event.stopPropagation();
+            self.purchaseReload(page);
+        }
+    }
+    
     this.setPurchaseFavorite = function(purchase, myb)
     {
         var check = ($(myb).prop('checked')) ? 1 : 0;
@@ -107,7 +117,15 @@ var catalog = new function(){
     
     this.showModal = function(href)
     {
-        self.modalWin( "<img src='"+ href +"'/>" );
+        if(href.search('#') == 0){
+            var $div = $("<div/>",{
+                class : 'modal-win-box',
+                html : $(href).clone().html()
+            });
+            self.modalWin( $div );
+        }else{
+            self.modalWin( "<div class='modal-win__img-box'><img src='"+ href +"'/></div>" );
+        }
     }
     
     this.createOrder = (myb, event, id)=>
@@ -124,8 +142,10 @@ var catalog = new function(){
             if(!data.stat){
                 throw(data.error);
             }else{
+                console.log('order info', data);
+                //Update basket
                 $loader.remove();
-                navigation.reload();
+                //navigation.reload();
             }  
           })
           .catch((e)=>{

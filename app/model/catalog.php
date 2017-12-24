@@ -154,7 +154,7 @@ class catalog extends base
         
         if($filter['cat']){
             $cats = implode( ",", array_map("intval",$filter['cat']) );
-            $sql .= " && p.id in(select purchase from purchase_cat where cat in($cats))";
+            $sql .= " && p.id in(select DISTINCT purchase from stock where cat in($cats))";
         }
         
         if($filter['status']){
@@ -257,6 +257,8 @@ class catalog extends base
         
         $sql .= $this->createLimit($page, $limit);
         
+        //$this->db->setLogger($sql);
+        
         $list = $this->db->select($sql);
         
         return [
@@ -320,21 +322,34 @@ class catalog extends base
     }
     
     public function getPurchaseOptions($purchase)
-    {
-        return $this->db->select("select o.name,o.type,o.id as ARRAY_KEY, "
+    { 
+        $this->db->setLogger();
+        $list = $this->db->select("select o.name,o.type,o.id as ARRAY_KEY, o.key, "
                 . " (CASE o.type "
                     . " WHEN 'text' then value_text "
                     . " when 'radio' then value_radio"
                     . " when 'price' then value_price"
                     . " when 'percent' then value_percent"
+                    . " when 'files' then value_files"
                 . " end) as `value`"
                 . " from purchase_options as o, purchase_values as v"
                 . " where v.purchase = ?d && o.id = v.option_id", $purchase);
+        
+       
+        
+        if($list[9]['value']){
+           $list[9]['value'] = json_decode($list[9]['value'],1);
+           $images = new images();
+           $list[9]['value'] = $images->getFilesByIds($list[9]['value']);
+        }
+        
+        return $list;
     }
     
     public function getPurchaseStockCats($purchase)
     {
-        return $this->db->select("select c.id,c.name from stock_cats as c,stock as s where s.purchase = ?d && s.cat = c.id group by c.id", $purchase);
+        $list = $this->db->select("select c.id,c.name from cats as c,stock as s where s.purchase = ?d && s.cat = c.id group by c.id", $purchase);
+        return $list;
     }
     
     public $stockFilter = [
@@ -372,17 +387,26 @@ class catalog extends base
         
         if($filter['cats'] && $filter['cats'][0]!=0){
             $cats = array_map("intval", $filter['cats']);
-            $sql .= " && s.cat in(" .implode(",", $cats) . ")"; 
+            if($where){
+                $where .= " && ";
+            }
+            $where .= " s.cat in(" .implode(",", $cats) . ")"; 
         }
         
         if($filter['price_from']){
             $from = intval($filter['price_from']);
-            $where .= " && s.price >= $from ";
+            if($where){
+                $where .= " && ";
+            }
+            $where .= " s.price >= $from ";
         }
         
         if($filter['price_to']){
             $to = intval($filter['price_to']);
-            $where .= " && s.price >= $to ";
+            if ($where) {
+                $where .= " && ";
+            }
+            $where .= " s.price <= $to ";
         }
         
         $page  = intval($filter['page']);
@@ -397,10 +421,11 @@ class catalog extends base
         $sql .= $this->createLimit($page, $limit);
         
         $list = $this->db->select($sql);
-        
+        $count  = $this->getCount();
         $ids = array_keys($list);
         
         $images = $this->db->select("select * from images where parent='stock' && parent_id in (?a)", $ids);
+        
         foreach($images as $img){
             $list[$img['parent_id']]['img'][] = $img;
         }
@@ -412,7 +437,7 @@ class catalog extends base
         
         return [
             'list'  => $list,
-            'count' => $this->getCount(),
+            'count' => $count,
             'page'  => $page,
             'limit' => $limit
         ];
@@ -560,7 +585,7 @@ class catalog extends base
         $aviable = $this->getOptions();
         $this->db->query("DELETE from purchase_values where purchase=?d",$id);
         if($options){
-            $sql = "INSERT INTO `purchase_values`(`option_id`, `purchase`, `value_text`, `value_percent`, `value_radio`, `value_price`) VALUES ";
+            $sql = "INSERT INTO `purchase_values`(`option_id`, `purchase`, `value_text`, `value_percent`, `value_radio`, `value_price`, `value_files`) VALUES ";
             $add = [];
             $base = array(
                 'option_id'     => 0,
@@ -568,7 +593,8 @@ class catalog extends base
                 'value_text'    => "NULL",
                 'value_percent' => "NULL",
                 'value_radio'   => "NULL",
-                'value_price'   => "NULL"
+                'value_price'   => "NULL",
+                'value_files'   => "NULL"
             );
             foreach($options as $opt=>$val){
                 if($val!=""){
@@ -683,7 +709,7 @@ class catalog extends base
         return $this->db->selectRow("select * from tags where id=?d",$id);
     }
     
-    public function addToOrder($stock, $purchase, $count, $sum, $color, $size, $user, $orderId=null)
+    public function addToOrder($stock, $purchase, $count, $sum, $color, $size, $user, $orderId=0)
     {
         $sql = "INSERT INTO `basket_stocks`(`stock`,`purchase`, `count`, `summ`, `color`, `size`, `user`, `order_id`) VALUES ";
         $stock = (int)$stock;
@@ -708,6 +734,21 @@ class catalog extends base
         return $this->db->select("select *,id as ARRAY_KEY from basket_stocks where user=?d {&& purchase=?d} && order_id=?d", $user, ($purchase) ? $purchase : DBSIMPLE_SKIP, $order);
     }
     
+    public function getOrderStocks($orderId)
+    {
+        $sql = 
+            "SELECT b.id, b.count, b.summ, b.color, b.size, b.stock, s.name, s.sizes, s.colors
+                FROM stock as s, basket_stocks as b  
+                where s.id = b.stock && b.order_id =?d";
+        
+        $list = $this->db->select($sql, $orderId);
+        foreach($list as $key=>$item){
+            $list[$key]['colors'] = json_decode($item['colors'],1);
+            $list[$key]['sizes']  = json_decode($item['sizes'],1);
+        }
+        return $list;
+    }
+    
     public function deleteOrderItemsPurchase($purchase, $user)
     {
         $this->db->query("DELETE from basket_stocks where user=?d && purchase=?d", $user, $purchase);
@@ -722,6 +763,48 @@ class catalog extends base
         return $total;
     }
     
+    public function prepareOrder($user, $purchase)
+    {
+        return $this->db->insert('orders',[
+            'user'     => $user,
+            'purchase' => $purchase,
+            'summ'     => 0
+        ]);
+    }
+    
+    public function  updateOrder($id, $total)
+    {
+        $this->db->query('UPDATE `orders` SET ?a where id=?d ',[
+            'summ'     => $total,
+        ], $id);
+        
+        $order = $this->getOrder($id);
+        
+        $notice = new \app\controller\notice();
+        $notice->createOrder($order['user'], $id, $total);
+        
+        return $order;
+    }
+    
+    public function updateStatusOrder($id, $status)
+    {
+        $order = $this->getOrder($id);
+        
+        if($order['status'] != $status){
+            
+            $this->db->query('UPDATE `orders` SET ?a where id=?d ', [
+                'status' => $status,
+            ], $id);
+             
+            $order['status'] = $this->orderStatuses[$status];
+            
+            $notice = new \app\controller\notice();
+            $notice->updateStatusOrder($order);
+        }else{
+            throw new \Exception("Данные не изменены");
+        }
+    }
+
     public function addOrder($user, $purchase, $total)
     {
         $id =  $this->db->insert('orders',[
@@ -729,6 +812,10 @@ class catalog extends base
             'summ'     => $total,
             'purchase' => $purchase
         ]);
+        
+        if(!$id){
+            throw new Exception("Ошибка создания заказа");
+        }
         
         $notice = new \app\controller\notice();
         $notice->createOrder($user, $id, $total);
@@ -757,5 +844,21 @@ class catalog extends base
             'status'      => $status,
             'date_change' => date("Y-m-d H:i:s")
         ], $order);
+    }
+    
+    public function deletePurchase($id)
+    {
+        //ODO delete options and stocks
+        $this->deleteObject('purchase', $id);
+    }
+    
+    public function deleteStock($id)
+    {
+        $this->deleteObject('stock', $id);
+    }
+    
+    public function getTotalPurchase($id)
+    {
+        return $this->db->selectRow("SELECT SUM(`count`) as 'count', SUM(`summ`) as 'summ' FROM `basket_stocks` WHERE purchase = ?d group by purchase", $id);
     }
 }

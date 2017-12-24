@@ -5,22 +5,48 @@
         var self = this;
         //this.time = 0;
         
+        this.eventOpenDialog = function()
+        {
+            var $lastElem = $('.dialog__message-item:last');
+                
+            if($lastElem.length){
+                var top = $lastElem.offset().top;
+            }else{
+                var top = 0;
+            }
+
+            $('.dialog__box').animate({
+                scrollTop: top
+            },200);
+            self.updateCount();
+            
+            setTimeout(()=>{
+               $('.not-readed').removeClass('not-readed');
+            },1000);
+        }
+        
+        this.openedDialogs = function()
+        {
+            return location.pathname == "/messages/dialogs/";
+        }
+        
         this.connect = function(time)
         {
-            //self.time = time;
-            //self.poll();
-            console.log('time', time);
-            
             self.worker = new Worker("/build/worker.js");
             self.worker.addEventListener('message', function(e) {
-                console.log('Worker said: ', e.data.data);
                 if(e.data.action == 'message'){
                     var message = e.data.data;
-                    if(self.getDialog() == message.from){
-                        self.renderMessage(message.from, message.date, message.text);
+                    message.from = parseInt(message.from);
+                    if(self.getDialog() === message.from){
+                        self.renderMessage(message.from, message.text, message.date);
+                        self.setRead( message.id );
                      }else{
-                        popUp('Новое сообщение');
-                        self.updateCount();
+                        if(self.openedDialogs()){
+                            navigation.reload();
+                        }else{
+                            self.updateCount();
+                            popUp('Новое сообщение');
+                        }
                     }
                 }
             }, false);
@@ -31,20 +57,29 @@
             });
         }
         
+        this.setRead = function(messageId)
+        {
+            return self.post("messages", 'setRead',{
+                'id' : messageId
+            });
+        }
+        
         this.updateCount = function()
         {
             var $box = $('.js-count-message');
-            var val = parseInt($box.text());
-            $box.html( val + 1 );
+            self.post('messages','getCount')
+                .then((data)=>{
+                    $box.text( data.count );
+                });
         }
         
         this.getDialog = function()
         {
             var match = location.pathname.match(`/messages/user/([0-9]*)/`);
             if(match){
-                return match[1];
+                return parseInt(match[1]);
             }else{
-                return 0;
+                return false;
             }
         }
         
@@ -100,7 +135,17 @@
                     <div class="dialog__message-text">${text}</div>
                 </div>`
             );
+    
+            $('.dialog__box').animate({
+                scrollTop : $('.dialog__message-item:last').offset().top 
+            });
         }
         
+        init();
+        function init(){
+            events.add('openDialog',function(){
+                self.eventOpenDialog();
+            });
+        }
     }
 })();

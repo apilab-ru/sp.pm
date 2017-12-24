@@ -15,6 +15,7 @@
 }
 .dialog__list {
     /*overflow: auto;*/
+    min-height:200px;
 }
 .messages__box {
     flex: 1;
@@ -57,6 +58,7 @@
 .dialog__message-item {
     padding: 10px;
     margin-bottom: 7px;
+    transition: border 1s ease-out;
 }
 .dialog__message-item.dialog__from {
     margin-left: 40px;
@@ -105,4 +107,7 @@
 .dialogs__list-item-text{
     font-size: 12px;
     line-height: 1.5em;
+}
+.dialog__message-item.not-readed{
+    border: 2px solid #FFEB3B;
 }

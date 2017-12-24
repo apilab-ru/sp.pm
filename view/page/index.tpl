@@ -6,6 +6,41 @@
     <title>{$title}</title>
     <link href="/build/build.css?1{$smarty.now}" type="text/css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lobster|Ubuntu:400,700&amp;subset=cyrillic" rel="stylesheet">
+    <script>
+        (function(){
+            window.events = new function(){
+                
+                var list  = {};
+                var queue = {};
+                
+                this.trigger = function(type, data){
+                    if(list[type]){
+                        for(let key in list[type]){
+                            list[type][key](data);
+                        };
+                    }else{
+                       if(!queue[type]){
+                           queue[type] = [];
+                       }; 
+                       queue[type].push(data);
+                    };
+                };
+                
+                this.add = function(type, callback){
+                    if(!list[type]){
+                        list[type] = [];
+                    }
+                    list[type].push( callback );
+                    if(queue[type]){
+                       for(let key in queue[type]){
+                            callback(queue[type][key]);
+                        } 
+                        delete(queue[type]);
+                    };
+                }
+            };
+        })();
+    </script>
 </head>
 <body>
     <header class="main-head main-col">
@@ -13,7 +48,8 @@
         <div class="main-head__right-col">
             <div class="auth-box">
                 {if $user}
-                    <a href="/cabinet/" class="button yellow top"> Личный кабинет </a>
+                    <div class='main-user-name'> {$user.surname} {$user.name} </div>
+                    <a href="/cabinet/" class="button yellow top"> Личный кабинет  </a>
                     {if $user.type == 'admin'}
                     <a href="/admin/" class="button yellow top"> Админпанель </a>
                     {/if}

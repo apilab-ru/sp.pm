@@ -9,9 +9,9 @@
                 <h1 class="art-title">{$purchase.name}</h1>
                 <div class="art__after-title">
                     <span>Организатор</span> <span class="catalog__item-user">{$organizator.name}</span>
-                    <span class="catalog__item-decor"></span> <span>{$purchase.date_create}</span>
+                    <span class="catalog__item-decor"></span> <span>{$purchase.date_create|date:"Y-m-d"}</span>
                     {if $purchase.date_stop}
-                        Стоп: <span class="catalog__item-decor"></span> <span>{$purchase.date_stop}</span>
+                        &nbsp;&nbsp;&nbsp;Стоп: <span class="catalog__item-decor"></span> <span>{$purchase.date_stop}</span>
                     {/if}
                 </div>
                 
@@ -32,33 +32,42 @@
                 <div class="p-conditions">
                     <div class="p-conditions__title"> Условия закупки: </div>
                     {foreach from=$options item=option}
-                    <div class="p-conditions__item">
-                        <span class="p-conditions__name"> {$option.name}: </span>
-                        <span class="p-conditions__value"> 
-                            {if $option.type == 'radio'}
-                                {if $option.value}Да{else}Нет{/if}
-                            {else}
-                                {$option.value}
-                            {/if}
-                            {if $option.type == 'price'}
-                            &nbsp;руб 
-                            {/if}
-                            {if $option.type == 'percent'}
-                            &nbsp;% 
-                            {/if}
-                        </span>
-                    </div>
+                        {if $option.key != 'sizes-map'}
+                            <div class="p-conditions__item">
+                                <span class="p-conditions__name"> {$option.name}: </span>
+                                <span class="p-conditions__value"> 
+                                    {if $option.type == 'radio'}
+                                        {if $option.value}Да{else}Нет{/if}
+                                    {else}
+                                        {$option.value}
+                                    {/if}
+                                    {if $option.type == 'price'}
+                                    &nbsp;руб 
+                                    {/if}
+                                    {if $option.type == 'percent'}
+                                    &nbsp;% 
+                                    {/if}
+                                </span>
+                            </div>
+                        {/if}
                     {/foreach}
                 </div>
                 
                 <div class='p-already-ordered'> 
-                    Уже заказано на: 0 руб (0 шт.) 
+                    Уже заказано на: {$total.summ|number_format :2:".":" "} руб. ({$total.count} шт.) 
                 </div>
                 
-                <a target="_blank" href='/photos/stock/2017/11/sizes.jpg' class='p-conditions__name js-modal'>
-                    <div>Размерная сетка:</div>
-                    <img src='/cachephoto/stock/2017/11/sizes_100x100x2s.jpg'/>
-                </a>
+                {if $options[9].value}
+                    <br>
+                    <div><a>Размерная сетка:</a></div>
+                    <div class='flex-line'>
+                    {foreach from=$options[9].value item=img}
+                        <a target="_blank" href='{$img|img:"0x0x3"}' class='p-conditions__name js-modal'>
+                            <img src='{$img|img:"100x100x2"}'/>
+                        </a>
+                    {/foreach}
+                    </div>
+                {/if}
             </div>
             <div class="zakupka__right-row">
                 <img class="organizator__photo-img" src="{$organizator.photo|img:"168x198x3"}"/>

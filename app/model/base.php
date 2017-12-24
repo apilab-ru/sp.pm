@@ -11,7 +11,7 @@ class Base
     
     public function updateobject($table,$send)
     {
-        if ($send['id']) {
+        if ($send['id'] || $send['id'] === "0" || $send['id'] === 0) {
             $id = $send['id'];
             unset($send['id']);
             $this->db->update($table, $send, $id);

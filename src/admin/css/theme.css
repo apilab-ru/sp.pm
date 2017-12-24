@@ -351,6 +351,7 @@ td.center,.center {
 }
 .submitLine{
     position: relative;
+    text-align: right;
 }
 
 .formProgress {

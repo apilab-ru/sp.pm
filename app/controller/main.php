@@ -93,5 +93,39 @@ class main extends base{
         $arts = new \app\model\arts();
         $arts->updateArtsTree($send['send']['list']);
     }
+    
+    public function listDelivery()
+    {
+        $widget   = new widget();
+        $delivery = new \app\model\delivery();
+
+        $data = $delivery->getDataList();
+        
+        return $widget->tableAndFilter(
+            $widget->tableByFilter(
+                $data, [
+                    "title"  => "Список доставки",
+                    "add"    => "/admin/main/editDelivery",
+                    "edit"   => "/admin/main/editDelivery",
+                    "delete" => "/admin/main/deleteDelivery",
+                    "labels" => [
+                        "id"      => "id",
+                        "address" => "Адресс",
+                        "descr"   => "Описание"
+                    ]
+                ]), ""
+        );
+    }
+    
+    public function editDelivery($args)
+    {
+        if($args['send']['id']){
+           $delivery = new \app\model\delivery();
+           $object   = $delivery->getDelevery($args['send']['id']);
+        }
+        echo $this->render('main/editDelivery',[
+            'object' => $object
+        ]);
+    }
 
 }

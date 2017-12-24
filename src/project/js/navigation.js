@@ -88,7 +88,17 @@
 $(function(){
     
     $(document).on('click','a',function(event){
+        
+        if( $(this).hasClass('js-modal') ){
+            return false;
+        }
+        
         var href = $(this).attr('href');
+        
+        if(!href){
+            return false;
+        }
+        
         if(href[0] == "/" && href != '/admin/'){
             navigation.goLink(href, event);
         }

@@ -11,11 +11,14 @@
                         {$item.date|date:"h:i d.m.y"}
                     </div>
                     <div class="dialogs__list-item-text">
-                        {$item.text}
+                        {$item.text|strip_tags}
                     </div>
                 </div>
             </a>
+        {foreachelse}
+            <div class="not-found"> Диалогов не найдено </div>
         {/foreach}
+        
     </div>
 {widget 
     name  = 'pagination'

@@ -11,10 +11,13 @@ class messages extends base
         $this->renderMessages($param['id'], $page);
         $content = ob_get_clean();
         
+        $user = (new \app\model\users())->getUser($param['id']);
+        
         echo $this->render('messages/main',[
             'navigation' => 'user',
+            'user'       => $user,
             'content'    => $this->render('messages/dialog',[
-                'opponent' => (new \app\model\users())->getUser($param['id']),
+                'opponent' => $user,
                 'content'  => $content
             ])
         ]);
@@ -28,11 +31,35 @@ class messages extends base
         $user     = $users->getUser($_SESSION['user']['id']); 
         
         $messages = new \app\model\messages();
+        
+        $list = $messages->getMessages($user['id'], $opponent['id'], $page);
+        
+        $ids = array_map(function($item){
+            return $item['id'];
+        }, $list);
+        
+        $messages->setRead($ids);
+                
         echo $this->render('messages/dialogMessages',[
-            'list'     => $messages->getMessages($user['id'], $opponent['id'], $page),
+            'list'     => $list,
             'user'     => $user,
             'opponent' => $opponent
         ]);
+    }
+    
+    public function getCount()
+    {
+        $mesages = new \app\model\messages();
+        return [
+            'count' => $mesages->getCount(),
+            'stat'  => 1
+        ];
+    }
+    
+    public function setRead($param, $args)
+    {
+        $messages = new \app\model\messages();
+        $messages->setRead([ intval($args['id']) ]);
     }
     
     public function dialogs($param, $args)
@@ -40,8 +67,9 @@ class messages extends base
         $messages = new \app\model\messages();
         
         $filter = array(
-            'user' => $_SESSION['user']['id'],
-            'page' => $args['page']
+            'user'      => $_SESSION['user']['id'],
+            'page'      => $args['page'],
+            'notnotice' => 1
         );
         
         $data = $messages->getDialogs($filter);
@@ -55,8 +83,18 @@ class messages extends base
     
     public function notices($param)
     {
+        $messages = new \app\model\messages();
+        
+        ob_start();
+        $this->renderMessages(0, 1);
+        $content = ob_get_clean();
+        
         echo $this->render('messages/main',[
             'navigation' => 'notices',
+            'content'    => $this->render('messages/dialog',[
+                'opponent' => (new \app\model\users())->getUser(0),
+                'content'  => $content
+            ])
         ]);
         return ['struct' => 'messages'];
     }

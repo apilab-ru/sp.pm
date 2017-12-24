@@ -59,7 +59,8 @@ class catalog extends base
             'options'     => $catalog->getPurchaseOptions($purchase['id']),
             'user'        => $user,
             'cats'        => $catalog->getPurchaseStockCats($purchase['id']),
-            'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['id'], $user['id'])
+            'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['id'], $user['id']),
+            'total'       => $catalog->getTotalPurchase($purchase['id'])
         ]);
 
         return  [
@@ -94,7 +95,9 @@ class catalog extends base
     public function stockList($args, $param)
     {
         $catalog = new \app\model\catalog();
+        $param['limit'] = 12;
         $data    = $catalog->getStockByFilter($param);
+        $data['purchase'] = intval($param['purchase']);
         $data['basket'] = new \app\model\basket();
         $opts = $catalog->getPurchaseOptions($param['purchase']);
         $data['org'] = $opts[3]['value'];
@@ -206,7 +209,6 @@ class catalog extends base
             $list[$key]['stock'] = $stocks[$item['stock']];
         }
         $purchase = $catalog->getPurchaseInfo(reset($list)['purchase']);
-        //pr($purchase, $order, $list, $stocks);
         echo $this->render("catalog/orderId",[
             'order'       => $order,
             'purchase'    => $purchase,
@@ -356,6 +358,8 @@ class catalog extends base
         );
     }
     
+    
+    
     public function stockTable($param)
     {
         $widget  = new widget();
@@ -408,6 +412,18 @@ class catalog extends base
         return $this->editStockForm($param['send']['id']);
     }
     
+    public function deletePurchase($param)
+    {
+        $catalog = new \app\model\catalog();
+        $catalog->deletePurchase($param['send']['id']);
+    }
+    
+    public function deleteStock($param)
+    {
+        $catalog = new \app\model\catalog();
+        $catalog->deleteStock($param['send']['id']);
+    }
+    
     public function addStock($param)
     {
         return $this->editStockForm();
@@ -428,6 +444,34 @@ class catalog extends base
             'purchases' => $purchases,
             "cats"      => $catalog->getCatsList()
         ]);
+    }
+    
+    
+    public function editOrder($args)
+    {
+        $catalog = new \app\model\catalog();
+        $order = $catalog->getOrder($args['send']['id']);
+        $list = $catalog->getOrderStocks($order['id']);
+        
+        return $this->render('catalog/formEditOrder',[
+            'object'   => $order,
+            'list'     => $list,
+            'statuses' => $catalog->orderStatuses,
+            'users'    => (new \app\model\users())->getSimpleList()
+        ]);
+    }
+    
+    public function updateOrder($args)
+    {
+        $catalog = new \app\model\catalog();
+        
+        $send = $args['send']['form'];
+        
+        $catalog->updateStatusOrder($send['id'], $send['status']);
+        
+        return [
+            'stat'  => 1
+        ];
     }
     
     public function addPurchase($param)
@@ -465,8 +509,27 @@ class catalog extends base
     public function savePurchase($send)
     {
         $catalog = new \app\model\catalog();
-        $id = $catalog->savePurchase($send['send']['form']);
-        $catalog->savePurchaseOptions($id, $send['send']['option']);
+        
+        $send = json_decode($send['form'],1);
+        
+        $images = new \app\model\images();
+        $files = $images->getFiles($_FILES['file']);
+        
+        $id = $catalog->savePurchase($send['form']);
+        $filesIds = $send['option'][9];
+        if(!$filesIds){
+            $filesIds = [];
+        }
+        
+        foreach($files as $file){
+            $file = $images->uploadFile($file,'other');
+            $filesIds[] = $images->addImage($file['name'], $file['name'], $file['folder'], 'other', 0, $file['type']);
+        }
+        
+        $send['option'][9] = json_encode($filesIds);
+        
+        $catalog->savePurchaseOptions($id, $send['option']);
+        
         return [
             'id'   => $id,
             'stat' => 1
@@ -687,23 +750,35 @@ class catalog extends base
             throw new \Exception("Ошибка! Закупка неактивна!");
         }
         
+        $orderId = $catalog->prepareOrder($_SESSION['user']['id'], $group['purchase']['id']);
+        
+        $total = 0;
+        
         foreach($group['list'] as $item){
+            
+            $summ = $basket->calcSummItem($item['stock'], $item['count'], $group['purchase'], $group['total']);
+            $total += $summ;
+            
             $catalog->addToOrder(
                 $item['stock']['id'], 
                 $group['purchase']['id'],
                 $item['count'], 
-                $basket->calcSummItem($item['stock'], $item['count'], $group['purchase'], $group['total']),
-                $item['param']['size'],
+                $summ,
                 $item['param']['color'],
-                $_SESSION['user']['id']
+                $item['param']['size'],
+                $_SESSION['user']['id'],
+                $orderId
             );
             $basket->orderChange($item['stock']['id'], $item['param'], -1 * $item['count']);
         }
         
+        $catalog->updateOrder($orderId, $total);
+        
         $basket->saveBasket();
         
         return [
-            'stat' => 1
+            'stat'  => 1,
+            'order' => $orderId
         ];
     }
     

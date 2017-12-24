@@ -28,7 +28,7 @@
                 <div class='value'>
                     {if $item.type == 'select'}
                         <select name='{$key}{if $item.multiple}[]{/if}' {if $item.multiple}multiple='true'{/if}>
-                            <option value='0'> --- </option>
+                            <option value='0'> -- Все -- </option>
                             {foreach from=$item.list item=it}
                                 <option value='{$it.id}' {if $it.id|inArray:$filter[$key]}selected{/if}>#{$it.id} {$it.name}</option>
                             {/foreach}

@@ -416,6 +416,11 @@ class images extends base{
         return $files;
     }
     
+    public function getFilesByIds($ids)
+    {
+        return $this->db->select("select * from images where id in (?a)", $ids);
+    }
+    
     /*public function addImage($file)
     {
         $name = $file['name'];

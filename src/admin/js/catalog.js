@@ -7,27 +7,56 @@ var catalog = new function()
         var $box = $(selector);
         $box.find('select').chosen();
         CKEDITOR.replace('editDescr');
+        
+        var $file = $box.find('.js-file-uploader') ;
+        var $list = $box.find('.js-list');
+        fileUploader.initListUploader(
+            $file, $list   
+        );
+        
         $box.on('submit',function(event){
             event.preventDefault();
             event.stopPropagation();
             var form = $box.serializeObject();
+            
+            console.log('form', form);
+            
             form.form.description = CKEDITOR.instances.editDescr.getData();
-            self.send('/admin/ajax/catalog/savePurchase',form)
-            .then((stat)=>{
-                if(stat.stat){
-                    return 1;
+            
+            var formData = new FormData();
+            form.option[9] = [];
+            
+            var files = $list.data('getFiles')();
+            
+            var n=0;
+            $.each(files,function(n,i){
+                if(i.id){
+                    form.option[9].push( i.id );
                 }else{
-                    throw(stat.error);
+                    formData.append('file['+ n +']', i);
+                    n++;
                 }
-            })
-            .then(()=>{
-                popUp("Успешно");
-                self.reload();
-                $box.trigger("close");
-            })
-            .catch((error)=>{
-                popUp(error);
-            })
+            });
+            
+            formData.append('form', JSON.stringify(form));
+            
+            self.sendFormData('/admin/ajax/catalog/savePurchase', formData)
+                //self.send('/admin/ajax/catalog/savePurchase',form)
+                .then((stat)=>{
+                    if(stat.stat){
+                        return 1;
+                    }else{
+                        throw(stat.error);
+                    }
+                })
+                .then(()=>{
+                    popUp("Успешно");
+                    self.reload();
+                    $box.trigger("close");
+                })
+                .catch((error)=>{
+                    popUp(error);
+                })
         });
     }
     

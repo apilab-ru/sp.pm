@@ -49,6 +49,6 @@ build/*js
 build/*css
 cache/*php
 cachephoto
-photo
+photos
 nbproject
 node_modules

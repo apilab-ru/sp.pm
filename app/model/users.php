@@ -45,12 +45,18 @@ class users extends base
         ];
     }
     
+    public function getSimpleList()
+    {
+        return $this->db->select("SELECT id, surname, name, secondname from users where id!=0"); //&& type='simple'
+    }
+    
     public function getUser($id=null)
     {
-        if(!$id){
+        if(!$id && $id!=="0" && $id!==0){
             $id = $_SESSION['user']['id'];
         }
         $user = $this->db->selectRow("select * from users where id=?d", $id);
+        
         $user['photo'] = $this->db->selectRow("select * from images where parent='user' && parent_id=?d", $id);
         return $user;
     }

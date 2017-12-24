@@ -66,7 +66,11 @@ var admin = new function () {
             self.send(link.replace('/admin/','/admin/ajax/'), $form.serializeObject() )
                     .then((stat)=>{
                         if(!stat.stat){
-                            throw("Ошибка");
+                            var error = "Ошибка"
+                            if(stat && stat.error){
+                                error = stat.error;
+                            }
+                            throw(error);
                         }else{
                             self.reload();
                             $win.remove();

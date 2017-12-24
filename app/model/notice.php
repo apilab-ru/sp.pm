@@ -7,23 +7,38 @@ namespace app\model;
 
 class notice extends base
 {
+    private $account = null;
+    public function getAccount()
+    {
+        if($this->account){
+            return $this->account;
+        }else{
+            return $this->account = $this->db->selectRow("select * from smtp_accounts order by id DESC limit 1");
+        }
+    }
+    
     public function send($email, $subject,  $text)
     {
-        $login = "viktor@apilab.ru";
+        $acc    = $this->getAccount();
+        $login  = $acc['login'];
+        $pass   = $acc['pass'];
+        $host   = $acc['host'];
+        $secure = $acc['secure'];
+        $port   = $acc['port'];
         
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);                              // Passing `true` enables exceptions
         try {
             //Server settings
-            $mail->SMTPDebug = 0;                                 // Enable verbose debug output
-            $mail->isSMTP();                                      // Set mailer to use SMTP
-            $mail->Host = 'smtp.yandex.ru';                       // Specify main and backup SMTP servers
-            $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = $login;                 // SMTP username
-            $mail->Password = 'a59g8km32';                           // SMTP password
-            $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-            $mail->Port = 465;                                    // TCP port to connect to
+            $mail->SMTPDebug = 0;                            // Enable verbose debug output
+            $mail->isSMTP();                                 // Set mailer to use SMTP
+            $mail->Host        =  $host;                     // Specify main and backup SMTP servers
+            $mail->SMTPAuth   = true;                        // Enable SMTP authentication
+            $mail->Username   = $login;                      // SMTP username
+            $mail->Password   = $pass;                       // SMTP password
+            $mail->SMTPSecure = $secure;                     // Enable TLS encryption, `ssl` also accepted
+            $mail->Port       = $port;                       // TCP port to connect to
             //Recipients
-            $mail->setFrom($login, 'СП Бутичок');
+            $mail->setFrom($login);
             $mail->addAddress($email);     // Add a recipient
 
             //Attachments
@@ -33,6 +48,7 @@ class notice extends base
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = $subject;
             $mail->Body    = $text;
+            $mail->AltBody = strip_tags($text);
             $mail->send();
             return true;
         } catch (\Exception $e) {

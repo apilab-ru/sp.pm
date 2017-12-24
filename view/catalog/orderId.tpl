@@ -1,6 +1,6 @@
 {strip}
     <div class='dostavka__art-box'>
         Заказ #{$order.id}
+        {include file='app:catalog/orderInfo'}
     </div>
-    {include file='app:catalog/orderInfo'}
 {/strip}

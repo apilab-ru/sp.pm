@@ -11,7 +11,7 @@
         {foreach from=$list item=item}
             <tr>
                 <td>
-                    {$item.id}
+                    <a href='/order/{$item.id}/'>Заказ {$item.id}</a>
                 </td>
                 <td>
                    <a href='/zakupka/{$item.purchase}/'>

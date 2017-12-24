@@ -132,6 +132,22 @@
                                             {$object.options[$option.id].value}
                                         </textarea>
                                     {/if}
+                                    {if $option.type=='files'}
+                                        <div class="js-file-uploader file-uploader__box list">
+                                            <ul class="js-list file-uploader__list">
+                                                {foreach from=$object.options[$option.id].value item=item}
+                                                    <li myid='{$item.id}' class='js-file-item'>
+                                                        <span onclick='fileUploader.removeThisFile(this)' class='icon-remove icon-white remove-icon'></span>
+                                                        <img src='{$item|img:"0x150x3"}'/>
+                                                    </li>
+                                                {/foreach}
+                                            </ul>
+                                            <div class="file-uploader__title" style='position: relative'>
+                                                Выберите файлы
+                                                <input type="file" class="file-uploader__input js-file" multiple>
+                                            </div>
+                                        </div>
+                                    {/if}
                                 </div>
                             </div> 
                         {/foreach}
