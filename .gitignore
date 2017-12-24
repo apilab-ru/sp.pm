@@ -48,7 +48,10 @@ Temporary Items
 build/*js
 build/*css
 cache/*php
+cache/*txt
 cachephoto
 photos
 nbproject
 node_modules
+cache/1.txt
+*.txt
