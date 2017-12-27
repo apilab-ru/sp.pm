@@ -83,4 +83,15 @@ class notice extends base
        ]);
        $this->sendNotice($organizator, "Оплата заказа #{$order['id']} закупки #{$purchase['id']} {$purchase['name']}", $text);
    }
+   
+    public function updatePassUser($user, $pass)
+    {
+       $user = (new \app\model\users())->getUser($user);
+       $this->sendNotice($user,
+        "Вы сменили пароль на сайте СП Бутичок",       
+        $this->render('notice/updatePass',[
+           "pass" => $pass,
+           "user" => $user
+       ]));
+    }
 }

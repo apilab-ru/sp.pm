@@ -9,7 +9,7 @@ class Base
         $this->db = \app\app::$db;
     }
     
-    public function updateobject($table,$send)
+    public function updateObject($table, $send)
     {
         if ($send['id'] || $send['id'] === "0" || $send['id'] === 0) {
             $id = $send['id'];
@@ -18,6 +18,7 @@ class Base
         } else {
             $id = $this->db->insert($table, $send);
         }
+        $this->db->checkError();
         return $id;
     }
     
@@ -135,7 +136,11 @@ class Base
     public function updateTree($table, $list)
     {
         foreach($list as $item){
-            $this->db->query("UPDATE $table SET parent=?d, `order`=?d where id=?d", $item['parent'], $item['order'], $item['id']);
+            $this->db->query("UPDATE $table SET {parent=?d,} `order`=?d where id=?d", 
+                    (isset($item['parent']) ? $item['parent'] : DBSIMPLE_SKIP), 
+                    $item['order'], 
+                    $item['id']);
         }
+        $this->db->checkError();
     }
 }

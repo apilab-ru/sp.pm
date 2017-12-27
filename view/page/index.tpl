@@ -50,7 +50,7 @@
                 {if $user}
                     <div class='main-user-name'> {$user.surname} {$user.name} </div>
                     <a href="/cabinet/" class="button yellow top"> Личный кабинет  </a>
-                    {if $user.type == 'admin'}
+                    {if $user.type == 'admin' || $user.type == 'organizator'}
                     <a href="/admin/" class="button yellow top"> Админпанель </a>
                     {/if}
                     <a class="js-auth-out button yellow top"> Выйти </a>

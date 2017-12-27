@@ -107,7 +107,12 @@ class users extends base
     
     public function organizator($args, $param)
     {
-        echo  "organizator " . $args['id'];
+        $users = new \app\model\users();
+        $user = $users->getUser($args['id']);
+        
+        echo $this->render("users/organizator",[
+            'user' => $user
+        ]);
         
         return [
             "struct" => "organizator"
@@ -118,5 +123,11 @@ class users extends base
     {
         (new \app\model\users())->deleteUser($param['send']['id']);
         return ['stat'=>1];
+    }
+    
+    public function updatePass($args, $send)
+    {
+        $users = new \app\model\users();
+        return $users->updatePassUser($_SESSION['user']['id'], $send['pass']);
     }
 }

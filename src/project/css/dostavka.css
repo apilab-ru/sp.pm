@@ -8,7 +8,12 @@
     min-height: calc(100vh - 700px);
 }
 .map-box {
-    margin: 0 auto;
-    display: table;
+    margin: 0 15px;
+    display: block;
     padding: 10px 0 80px;
+    height: 500px;
+}
+.delivery-page-edit__steps {
+    flex: 1;
+    padding: 0px 0 0 20px;
 }

@@ -107,9 +107,17 @@ class dataBase
         $this->db->query($sql,$table,$ids);
     }
     
-    function getError()
+    public function getError()
     {
         return $this->db->getErrors();
+    }
+    
+    public function checkError()
+    {
+        $error = $this->getError();
+        if($error['error']){
+            throw new \Exception($error['error']);
+        }
     }
     
     public function escape($str)

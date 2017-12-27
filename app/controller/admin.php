@@ -10,7 +10,7 @@ class admin extends base
             $this->auth();
             die();
         }else{
-            if(!\app\app::$my->isAdmin()){
+            if(!\app\app::$my->isAdmin() && !\app\app::$my->isOrganizator()){
                 die("Доступ закрыт");
             }
         }
@@ -40,8 +40,9 @@ class admin extends base
         "main" => [
             "name" => "Статьи",
             "list" => [
-                "editFaq"       => ["name" => "Редактирование FAQ"],
-                 "listDelivery" => ["name" => "Список адресов доставки" ]
+                "editFaq"          => ["name" => "Редактирование FAQ"],
+                "listDelivery"     => ["name" => "Список адресов доставки" ],
+                "editPageDelivery" => ["name" => "Редактирование страницы доставки"]
             ]
         ],
         "notice" => [
@@ -67,6 +68,12 @@ class admin extends base
                 );
             }
             foreach($data['list'] as $key=>$item){
+                
+                if( ! \app\app::$my->checkAccess($section,$key) ){
+                    unset($sections[$section]['list'][$key]);
+                    continue;
+                }
+                
                 if($section == $args['subcontroller'] && $key==$args['subaction']){
                     $sections[$section]['list'][$key]['check'] = 1;
                     
@@ -77,6 +84,9 @@ class admin extends base
 
                     break;
                 }
+            }
+            if(!$sections[$section]['list']){
+               unset($sections[$section]); 
             }
         }
         
@@ -109,7 +119,7 @@ class admin extends base
             $class = new $class();
         }
         
-        if( ! \app\app::$my->checkAccess($args['subcontroller'],$args['subaction']) ){
+        if(!$accessParam = \app\app::$my->checkAccess($args['subcontroller'],$args['subaction']) ){
             die("Доступ запрещён");
         }
         
@@ -117,6 +127,12 @@ class admin extends base
         
         if($param['send'] && is_string($param['send'])){
             $param = json_decode($param['send'],1);
+        }
+        
+         if(is_array($accessParam)){
+            foreach($accessParam as $key=>$val){
+                $param[$key] = $val;
+            }
         }
         
         try{
@@ -158,8 +174,14 @@ class admin extends base
             $class = new $class();
         }
         
-        if( ! \app\app::$my->checkAccess($args['subcontroller'],$args['subaction']) ){
+        if(!$accessParam = \app\app::$my->checkAccess($args['subcontroller'],$args['subaction']) ){
             die("Доступ запрещён");
+        }
+        
+        if(is_array($accessParam)){
+            foreach($accessParam as $key=>$val){
+                $param[$key] = $val;
+            }
         }
         
         ob_start();

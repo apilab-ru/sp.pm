@@ -33,7 +33,22 @@ class main extends base{
     
     public function delivery()
     {
-        echo $this->render('main/delivery');
+        $arts     = new \app\model\arts();
+        $delivery = new \app\model\delivery();
+        
+        $delivers = $delivery->getListDelivery();
+        
+        $art = $arts->getArtsStruct(5);
+        $art = $art[0];
+        $art['params'] = $delivery->parsePoint($art['params']);
+        
+        $steps = $arts->getSteps(5);
+        
+        echo $this->render('main/delivery',[
+            'art'      => $art,
+            'delivers' => $delivers,
+            'steps'    => $steps
+        ]);
         return [
              "struct" => 'delivery'
         ];
@@ -41,8 +56,6 @@ class main extends base{
     
     public function editFaq()
     {
-        //$widget  = new widget();
-        //return $widget->tableAndFilter("","");
         $arts = new \app\model\arts();
         $struct = 2;
         return $this->render('main/editFaq',[
@@ -126,6 +139,85 @@ class main extends base{
         echo $this->render('main/editDelivery',[
             'object' => $object
         ]);
+    }
+    
+    public function deleteDelivery($send)
+    {
+        $delivery = new \app\model\delivery();
+        $delivery->deleteObject('delivers', $send['send']['id']);
+        return [
+            'stat'=>1
+        ];
+    }
+    
+    public function saveDelivery($send)
+    {
+        $delivery = new \app\model\delivery();
+        $delivery->saveDelivery($send['send']['form']);
+        return [
+            'stat' => 1
+        ];
+    }
+    
+    public function editPageDelivery()
+    {
+        $arts = new \app\model\arts();
+        $steps = $arts->getSteps(5);
+        $art   = $arts->getArtsStruct(5);
+        
+        $art = $art[0];
+        
+        echo $this->render('main/editDeliveryPage',[
+            'art'   => $art,
+            'steps' => $steps
+        ]);
+    }
+    
+    public function editStep($param)
+    {
+        if($param['send']['id']){
+            $arts = new \app\model\arts();
+            $step = $arts->getStep($param['send']['id']);
+        }else{
+            $step = $param['send']['param'];
+        }
+        echo $this->render('main/formEditStep',[
+            'object' => $step
+        ]);
+    }
+    
+    public function saveTextPageDelivery($param, $send)
+    {
+        $arts = new \app\model\arts();
+        $art   = $arts->getArtsStruct(5);
+        $art = $art[0];
+        $arts->updateObject('arts', [
+            'text'   => $send['text'],
+            'id'     => $art['id'],
+            'struct' => 5
+        ]);
+    }
+    
+    public function deleteStep($param, $send)
+    {
+        $arts = new \app\model\arts();
+        $arts->deleteObject('steps', $send['id']);
+    }
+    
+    public function saveStep($param)
+    {
+        $arts = new \app\model\arts();
+        $arts->saveStep($param['send']);
+        return [
+            'stat' => 1
+        ];
+    }
+    
+    public function updateOrderSteps($params,$send)
+    {
+        $arts = new \app\model\arts();
+        $arts->updateStepsTree($send['list']);
+        return ['stat' => 1];
     }
 
 }

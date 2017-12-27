@@ -1,6 +1,7 @@
 <?php
 
 namespace app\model;
+use \app\controller\notice;
 
 class users extends base
 {
@@ -96,5 +97,23 @@ class users extends base
     public function getOrganizators()
     {
         return $this->db->select("select id,id as ARRAY_KEY, name, surname, secondname from users where type in ('simple','admin')");
+    }
+    
+    public function updatePassUser($user, $pass)
+    {
+        if(!$user){
+            throw new \Exception("Пользователя не существует!");
+        }
+        $this->updateObject('users',[
+            'password' => md5($pass),
+            'id'       => $user
+        ]);
+        
+        $notice = new \app\controller\notice();
+        $notice->updatePassUser($user, $pass);
+        
+        return [
+            'stat' => 1
+        ];
     }
 }

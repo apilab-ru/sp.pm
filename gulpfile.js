@@ -26,10 +26,10 @@ var path = {
             'src/project/js/serialize.js',
             'src/project/js/user.js',
             'src/admin/js/fileUploader.js',
+            'src/project/js/map.js',
             'vendor/chosen/chosen.jquery.js'
         ],
         worker : [
-            //'src/project/js/base.js',
             'src/project/js/worker.js'
         ],
         css : ['src/project/css/*.css','vendor/chosen/chosen.css']

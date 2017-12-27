@@ -31,6 +31,11 @@ class arts extends base
         return $this->updateTree('arts',$list);
     }
     
+    public function updateStepsTree($list)
+    {
+        return $this->updateTree('steps',$list);
+    }
+    
     public function rus2translit($string) {
         $converter = array(
             'а' => 'a',   'б' => 'b',   'в' => 'v',
@@ -74,5 +79,20 @@ class arts extends base
     public function getMainLinks()
     {
         return $this->db->select("select id,name,link from arts where show_main=1");
+    }
+    
+    public function getSteps($struct)
+    {
+        return $this->db->select("select * from steps where struct=?d order by `order`",$struct);
+    }
+    
+    public function getStep($id)
+    {
+        return $this->db->selectRow("select * from steps where id=?d",$id);
+    }
+    
+    public function saveStep($form)
+    {
+        return $this->updateObject('steps', $form);
     }
 }

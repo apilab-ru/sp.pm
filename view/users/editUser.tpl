@@ -43,12 +43,6 @@
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label"> Дата Регистрации </label>
-                                <div class="controls">
-                                    <input type="datetime-local" name="form[date_reg]" value="{$object.date_reg|default:$smarty.now|date:"Y-m-d\TH:i"}"/>
-                                </div>
-                            </div> 
-                            <div class="control-group">
                                 <label class="control-label"> Реквизиты </label>
                                 <div class="controls">
                                     <input type="text" name="form[requsites]" value="{$object.requsites}"/>
@@ -75,11 +69,17 @@
                                 </div>
                             </div>
                             <div class="control-group">
+                                <label class="control-label"> Дата Регистрации </label>
+                                <div class="controls">
+                                    <input type="datetime-local" name="form[date_reg]" value="{$object.date_reg|default:$smarty.now|date:"Y-m-d\TH:i"}"/>
+                                </div>
+                            </div>
+                            {*<div class="control-group">
                                 <label class="control-label">Город </label>
                                 <div class="controls">
                                     <input class="date" type="text" name="form[city]" value="{$object.city}"/>
                                 </div>
-                            </div>
+                            </div>*}
                             <div class="control-group">
                                 <label class="control-label">Фото </label>
                                 <div class="controls">

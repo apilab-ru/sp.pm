@@ -57,6 +57,14 @@ var abase = new function(){
         });
     }
     
+    this.get = function(url, send){
+        return new Promise((resolve, reject) => {
+            $.get(url,function(mas){
+                resolve(mas);
+            });
+        });
+    }
+    
     this.sendFormData = function(url, formData){
         return new Promise((resolve, reject)=>{
             var xhr = new XMLHttpRequest();

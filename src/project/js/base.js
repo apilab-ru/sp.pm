@@ -48,7 +48,14 @@ var base = new function () {
                 if (mas.stat) {
                     resolve(mas);
                 } else {
-                    reject(mas);
+                    if( $.type(mas)=='object' && mas.error){
+                        var error = mas.error;
+                    }else if( $.type(mas)=='object' && mas.html){
+                       var error = mas.html; 
+                    }else{
+                       var error = mas;  
+                    }
+                    reject(error);
                 }
             })
         });
@@ -149,7 +156,7 @@ var base = new function () {
 
         $back.on('click', '.reg-auth-close', function () {
             $back.remove();
-        })
+        });
 
         $('body').append($back);
     }

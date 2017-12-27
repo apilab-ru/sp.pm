@@ -11,16 +11,16 @@
             <div class="user-photo__ventex"></div>
         </div>
         <div class="cabinet-actions-box">
-            <a class="main-info__link-item main-info__link">
+            <a class="main-info__link-item main-info__link" href="/messages/dialogs/">
                 Посмотреть сообщения
             </a>
-            <a class="main-info__link-item main-info__link">
+            {*<a class="main-info__link-item main-info__link">
                 Написать сообщения
-            </a>
-            <a class="main-info__link-item main-info__link">
+            </a>*}
+            <a class="main-info__link-item main-info__link js-modal" href="#formChanePass">
                 Изменить пароль
             </a>
-            <a class="main-info__link-item main-info__link">
+            <a class="main-info__link-item main-info__link" href="/orders/">
                 Сообщить об оплате
             </a>
         </div>
@@ -34,10 +34,10 @@
             <span class="form-line__label"> Ф.И.О: </span>
             <span type="text" name="name" placeholder="Ф.И.О" class="form-input"> {$user.name} </span>
         </div>
-        <div class="form-line">
+        {*<div class="form-line">
             <span class="form-line__label"> Населённый пункт: </span>
             <span type="text" name="city" placeholder="Населённый пункт" class="form-input"> {$user.city} </span>
-        </div>
+        </div>*}
         <div class="form-line">
             <span class="form-line__label"> Мобильный телефон: </span>
             <span type="text" name="phone" placeholder="обильный телефон" class="form-input"> {$user.phone} </span>
@@ -51,6 +51,22 @@
             <span type="text" name="last_num" placeholder="Реквизиты для возврата средств" class="form-input"> {$user.last_num} </span>
         </div>
     </div>
+</div>
+<div id="formChanePass" style="display:none">
+    <form class="auth-form req-auth__item checked" onsubmit="user.updatePass(this,event)">
+        <div class="form-line">
+            <span class="form-line__label"> Пароль: </span>
+            <input type="text"  name="pass1" class="form-input" autocomplete="off">
+        </div>
+        <div class="form-line">
+            <span class="form-line__label"> Повторите пароль: </span>
+            <input type="text" name="pass2" class="form-input" autocomplete="off">
+        </div>
+        <div class="error form-line__error"></div>
+        <div class="form-submit-line">
+            <button class="main-info__link main-info__link-item form-submit" type="submit"> Изменить </button>
+        </div>
+    </form>
 </div>
 <script>
     var initCabinet = 1;

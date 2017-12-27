@@ -66,6 +66,13 @@ class app{
         }
     }
     
+    public function isOrganizator()
+    {
+        if($_SESSION['user']['type'] == 'organizator'){
+            return true;
+        }
+    }
+    
     public function isAuth()
     {
         if($_SESSION['user']){
@@ -83,13 +90,16 @@ class app{
     
     public function checkAccess($controller, $method)
     {
+        $type = $_SESSION['user']['type'];
         if( !isset($this->access[$controller]) || !isset($this->access[$controller][$method])  ){
             return true;
         }else{
-            if(in_array($_SESSION['user']['type'], $this->access[$controller][$method]) ){
+            if(in_array($type, $this->access[$controller][$method]) ){
                 return true;
+            }else if($this->access[$controller][$method][$type]){
+                return $this->access[$controller][$method][$type];
             }else{
-                return false;
+                return true;
             }
         }
     }

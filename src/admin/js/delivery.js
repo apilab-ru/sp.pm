@@ -1,29 +1,74 @@
 (function(abase){
+    "use strict";
     window.delivery = new function()
     {
         var self = this;
         this.__proto__ = abase;
         
-        //var link = "//api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=ru-RU";
-        
         this.mapInit = null;
         this.map     = null;
-        /*this.initMap = function()
+        
+        this.initEditPageDelivery = function()
         {
-            if(self.mapInit){
-                return self.mapInit;
-            }else{
-                return self.mapInit = new Promise((resolve, reject)=>{
-                    $.getScript(link,()=>{
-                        self.map = new ymaps.Map ("map", {
-                            center: [55.76, 37.64], 
-                            zoom: 7
+            CKEDITOR.replace('deliveryPageText');
+            var timeoutUpdate;
+            $('#steps').nestable({maxDepth: 1})
+                .on('change', (e) => {
+                    clearTimeout(timeoutUpdate);
+                    setTimeout(() => {
+                        
+                        var list = [];
+                        var order = 0;
+                        $('#steps li').each((n,i)=>{
+                            order++;
+                            
+                            var $item = $(i);
+                            
+                            list.push({
+                                id    : $item.attr('data-id'),
+                                order : order
+                            });
                         });
-                       resolve(); 
-                    });
+                        
+                        self.post('main','updateOrderSteps',{
+                            list : list
+                        }).then(()=>{
+                            popUp("Порядок Блоков обновлён");
+                        }).catch((e)=>{
+                            console.error(e);
+                            popUp("Ошибка сохранения порядка блоков",'error');
+                        });
+                    }, 700);
                 });
-            }
-        }*/
+        }
+        
+        events.add('editPageDelivery',()=>{
+            self.initEditPageDelivery();
+        });
+        
+        this.deleteStep = function(id, myb)
+        {
+            $(myb).parents('li').remove();
+            self.post('main','deleteStep',{
+                id : id
+            });
+        }
+        
+        this.savePageText = function()
+        {
+            var $loader = self.loader($('.js-delivery-page-text'));
+            var text = CKEDITOR.instances['deliveryPageText'].getData();
+            self.post('main','saveTextPageDelivery',{
+                text : text
+            }).then(()=>{
+                $loader.remove();
+                popUp("Успешно");
+            }).catch(()=>{
+                $loader.remove();
+                popUp("Ошибка","error");
+            })
+            
+        }
         
         this.initForm = function(selector)
         {
@@ -36,6 +81,9 @@
                     self.getPoint(address)
                         .then((point)=>{
                             $box.find('.js-point').val( point );
+                        })
+                        .catch(()=>{
+                            $box.find('.js-point').val("");
                         });
                 },1500);
             });
@@ -43,10 +91,20 @@
         
         this.getPoint = function(address)
         {
-            /*return self.initMap()
-                .then(()=>{
-                    
-                });*/
+            var url = "https://geocode-maps.yandex.ru/1.x/?format=json&geocode=";
+            
+            address = address.replace(" ","+");
+            
+            return self.get(url+address+"&results=1")
+                .then((data)=>{
+                    var point = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
+                    point = point.split(" ");
+                    return point[1] +", "+point[0];
+                })
+                .catch((e)=>{
+                    popUp("Адресс " + address + " не найден","error");
+                    throw(e);
+                });
         }
         
     }

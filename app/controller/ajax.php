@@ -28,7 +28,11 @@ class ajax extends base{
         
         try{
             ob_start();
-            $res = (new $class())->{$action}($args, $send);
+            $class = new $class();
+            if(!method_exists($class, $action)){
+                throw new \Exception("Неправильный запрос $controller-> " . $action);
+            }
+            $res = $class->{$action}($args, $send);
             $html = ob_get_clean();
         }catch(\Exception $e){
             $html = ob_get_clean();

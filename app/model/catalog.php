@@ -168,6 +168,11 @@ class catalog extends base
             }
         }
         
+        if($filter['user']){
+            $user = intval($filter['user']);
+            $sql .= " && s.user = $user ";
+        }
+        
         if($filter['discount']){
             $ids = implode(",", array_map("intval", $filter['discount']));
             $sql .= " && pd.discount in ($ids) ";
