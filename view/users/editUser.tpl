@@ -4,7 +4,7 @@
             <div class="muted pull-left"> Пользователь </div>
         </div>
         <div class="block-content">
-            {assign var=myid value=$smarty.now|cat:"useredit":$object.id}
+            {assign var=myid value="useredit"|cat:$smarty.now:$object.id}
             <form class="form-horizontal" method="post" action="/admin/users/save" id="{$myid}">
                 <fieldset>
                     <div class="flexLine">
@@ -94,6 +94,12 @@
                             </div>    
                         </div>
                     </div>
+                     <div class="control-group">
+                        <label class="control-label">Описание </label>
+                        <div class="controls">
+                            <textarea id="{$myid}_description" name="form[description]">{$object.description}</textarea>
+                        </div>
+                    </div> 
                     <div class="form-actions submitLine">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
                     </div>    
@@ -101,7 +107,7 @@
             </form>
             <script>
                 $(function(){
-                    user.initEditForm('#{$myid}');
+                    user.initEditForm('{$myid}');
                 })
             </script>
         </div>

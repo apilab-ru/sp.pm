@@ -2,17 +2,22 @@ var user = new function(){
     this.__proto__ = abase;
     var self = this;
     
-    this.initEditForm = function(selector){
-        var $box = $(selector);
+    this.initEditForm = function(myid){
+        var $box = $("#"+myid);
         var $file = $box.find('.js-file-uploader') ;
         fileUploader.initOneUploader(
             $file   
         );
         
+        CKEDITOR.replace(myid+"_description");
+        
         $box.on('submit',function(event){
             event.preventDefault();
             event.stopPropagation();
             var form = $box.serializeObject();
+            
+            form.form.description = CKEDITOR.instances[myid+"_description"].getData();
+            
             var formData = new FormData();
 			formData.append('photo', $file.getFiles());
             formData.append('send', JSON.stringify(form));

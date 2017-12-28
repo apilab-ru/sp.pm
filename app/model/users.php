@@ -85,11 +85,13 @@ class users extends base
         "adress"     => "string",
         "requsites"  => "string",
         "last_num"   => "string",
-        "date_reg"   => "datetime"
+        "date_reg"   => "datetime",
+        "description" => "string"
     ];
 
     public function saveUser($form)
     {
+        dlog('saveuser', $form);
         $form = $this->clearForm($form, $this->user);
         return $this->updateobject('users', $form);
     }

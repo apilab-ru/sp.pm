@@ -17,6 +17,11 @@ class notice extends base
         }
     }
     
+    public function saveAccount($form)
+    {
+        return $this->updateObject('smtp_accounts', $form);
+    }
+    
     public function send($email, $subject,  $text)
     {
         $acc    = $this->getAccount();

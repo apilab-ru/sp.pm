@@ -35,21 +35,32 @@ class notice extends base
    
     public function editAccount()
     {
-        $notice = new \app\model\notice();
+        $notice  = new \app\model\notice();
         $account = $notice->getAccount();
-        pr($account);
         
+        echo $this->render("notice/editAccount",[
+            'object' => $account
+        ]);
+    }
+    
+    public function saveAccount($param, $send)
+    {
+        $notice  = new \app\model\notice();
+        $notice->saveAccount($send);
+        return [
+            'stat' => 1
+        ];
     }
     
     public function updateStatusOrder($order) 
     {
         $user = (new \app\model\users())->getUser($order['user']);
         $this->sendNotice(
-                $user,
-                "Статус вашего заказа #" . $order['id'] . " обновлён", 
-                $this->render('notice/updateOrder', [
-                    "order" => $order,
-                ])
+            $user,
+            "Статус вашего заказа #" . $order['id'] . " обновлён", 
+            $this->render('notice/updateOrder', [
+                "order" => $order,
+            ])
         );
     }
 
