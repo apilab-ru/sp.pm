@@ -1,20 +1,20 @@
 {strip}
     <div class="block">
         <div class="navbar navbar-inner block-header">
-            <div class="muted pull-left">Страница доставки </div>
+            <div class="muted pull-left">{$title} </div>
         </div>
         <div class="block-content collapse in">
             <div class="flexLine">
                 <div class="delivery-page-edit__text js-delivery-page-text">
                     <textarea id="deliveryPageText">{$art.text}</textarea>
                     <div class="form-actions submitLine">
-                         <span class="btn btn-primary" onclick="delivery.savePageText()">Сохранить</span>
+                         <span class="btn btn-primary" onclick="delivery.savePageText({$struct})">Сохранить</span>
                     </div>
                 </div>
                 <div class="delivery-page-edit__steps">
                     <div class="table-toolbar">
                         <div class="btn-group">
-                            <button class="btn btn-success" onclick="admin.editForm('/admin/main/editStep',0,{ struct:5 })">
+                            <button class="btn btn-success" onclick="admin.editForm('/admin/main/editStep',0,{ struct:{$struct} })">
                                 Добавить <i class="icon-plus icon-white"></i>
                             </button>
                         </div>
@@ -25,8 +25,8 @@
                             <li class="js-item dd-item dd3-item" data-id="{$item.id}">
                                 <div class="dd-handle dd3-handle">Drag</div>
                                 <div class="dd3-content">
-                                    <div class="flexLine">
-                                        <span class="dd-name">{$item.text}</span>
+                                    <div class="flexLine flex-nowrap">
+                                        <span class="dd-name dd-one-line-name">{$item.text}</span>
                                         <span class="btn btn-danger" onclick="delivery.deleteStep({$item.id}, this)">
                                             <i class="icon-remove icon-white"></i>
                                         </span>
@@ -45,7 +45,7 @@
     </div>
     <script>
         $(function(){
-            events.trigger('editPageDelivery');
+            events.trigger('editPageSteps',{ struct:{$struct} });
         });
     </script>
 {/strip}

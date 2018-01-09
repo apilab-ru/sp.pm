@@ -8,7 +8,7 @@
         this.mapInit = null;
         this.map     = null;
         
-        this.initEditPageDelivery = function()
+        this.initEditPageSteps = function(data)
         {
             CKEDITOR.replace('deliveryPageText');
             var timeoutUpdate;
@@ -31,7 +31,8 @@
                         });
                         
                         self.post('main','updateOrderSteps',{
-                            list : list
+                            list   : list,
+                            struct : data.struct
                         }).then(()=>{
                             popUp("Порядок Блоков обновлён");
                         }).catch((e)=>{
@@ -42,8 +43,8 @@
                 });
         }
         
-        events.add('editPageDelivery',()=>{
-            self.initEditPageDelivery();
+        events.add('editPageSteps',(data)=>{
+            self.initEditPageSteps(data);
         });
         
         this.deleteStep = function(id, myb)
@@ -54,12 +55,13 @@
             });
         }
         
-        this.savePageText = function()
+        this.savePageText = function(struct)
         {
             var $loader = self.loader($('.js-delivery-page-text'));
             var text = CKEDITOR.instances['deliveryPageText'].getData();
-            self.post('main','saveTextPageDelivery',{
-                text : text
+            self.post('main','saveTextPage',{
+                text   : text,
+                struct : struct
             }).then(()=>{
                 $loader.remove();
                 popUp("Успешно");

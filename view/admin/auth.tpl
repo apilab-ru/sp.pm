@@ -5,6 +5,7 @@
             <title>Авторизация</title>
             <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&amp;subset=cyrillic" rel="stylesheet">
             <link href="/build/admin.css" rel="stylesheet">
+            <script src="/build/events.js"></script>
         </head>
         <body>
             <div class="container">

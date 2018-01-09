@@ -59,7 +59,7 @@ class catalog extends base
             'options'     => $catalog->getPurchaseOptions($purchase['id']),
             'user'        => $user,
             'cats'        => $catalog->getPurchaseStockCats($purchase['id']),
-            'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['id'], $user['id']),
+            'isFavorite'  => $catalog->checkPurchaseFavorite($purchase['provider'], $user['id']),
             'total'       => $catalog->getTotalPurchase($purchase['id'])
         ]);
 
@@ -488,13 +488,15 @@ class catalog extends base
     {
         $catalog = new \app\model\catalog();
         if($objectId){
-            $object = $catalog->getPurchase($objectId);
+            $object              = $catalog->getPurchase($objectId);
             $object['discounts'] = $catalog->getPurchaseDiscount($objectId);
             $object['options']   = $catalog->getPurchaseOptions($objectId);
             $object['tags']      = $catalog->getPurchaseTags($objectId);
         }
         
-        $users   = new \app\model\users();
+        $users     = new \app\model\users();
+        
+        $providers = new \app\model\providers();
         
         return $this->render("catalog/formEditPurchase",[
             "object"    => $object,
@@ -502,7 +504,8 @@ class catalog extends base
             "tags"      => $catalog->getTags(),
             "discounts" => $catalog->getDiscounts(),
             "options"   => $catalog->getOptions(),
-            "statuses"  => $catalog->statuses
+            "statuses"  => $catalog->statuses,
+            "providers" => $providers->providersData(['limit'=>1000])['list']
         ]);
     }
     
@@ -808,7 +811,30 @@ class catalog extends base
         
         $catalog->deleteOrderItemsPurchase($send['id'], $_SESSION['user']);
         
-        return ['stat'=>1];
+        return [ 'stat' => 1 ];
         //return $send['id'];
+    }
+    
+    public function providersTable($param)
+    {
+        $widget    = new widget();
+        $providers = new \app\model\providers();
+        
+        $data = $providers->providersData($param);
+        
+        return $widget->tableAndFilter(
+            $widget->tableByFilter(
+                $data,
+                [
+                    'title'  => 'Поставщики',
+                    'add'    => '/admin/admin/editProvider',
+                    'edit'   => "/admin/admin/editProvider",
+                    'delete' => "/admin/admin/deleteProvider",
+                    "labels" => [
+                        "id"            => "id",
+                        "name"          => "Название"
+                ]]), 
+            ""
+        );
     }
 }

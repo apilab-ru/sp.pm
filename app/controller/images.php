@@ -6,6 +6,7 @@ class images extends base
 {
     //public $dir = '/photos/';
     //public $cache = '/cachephoto/';
+    
     public function add($args, $param)
     {
         if($param['parent'] == 'user' 

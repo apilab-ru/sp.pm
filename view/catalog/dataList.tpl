@@ -2,7 +2,7 @@
     <div class="catalog__content-list">
         {foreach from=$list item=item}
             <div class="catalog__item">
-                <a onclick="navigation.goLink('/zakupka/{$item.id}/',event)" class="catalog__item-name" href='/zakupka/{$item.id}/'>{$item.name}</a>
+                <a onclick="navigation.goLink('/zakupka/{$item.id}/',event)" class="catalog__item-name" href='/zakupka/{$item.id}/'>#{$item.id}  {$item.name}</a>
                 <div class='flex-line'>
                     <div class="catalog__item-descr">
                         <a class="catalog__item-user" href="/organizator/{$item.id}/">{$item.user_name}</a> 

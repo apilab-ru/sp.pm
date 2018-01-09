@@ -10,7 +10,7 @@
                 <div class="art__after-title">
                     <span>Организатор</span> <span class="catalog__item-user">{$organizator.name}</span>
                     <span class="catalog__item-decor"></span> <span>{$purchase.date_create|date:"Y-m-d"}</span>
-                    {if $purchase.date_stop}
+                    {if $purchase.date_stop && $purchase.date_stop!='0000-00-00'}
                         &nbsp;&nbsp;&nbsp;Стоп: <span class="catalog__item-decor"></span> <span>{$purchase.date_stop}</span>
                     {/if}
                 </div>
@@ -32,7 +32,7 @@
                 <div class="p-conditions">
                     <div class="p-conditions__title"> Условия закупки: </div>
                     {foreach from=$options item=option}
-                        {if $option.key != 'sizes-map'}
+                        {if $option.key != 'sizes-map' && $option.key != 'sizes-table'}
                             <div class="p-conditions__item">
                                 <span class="p-conditions__name"> {$option.name}: </span>
                                 <span class="p-conditions__value"> 
@@ -57,7 +57,7 @@
                     Уже заказано на: {$total.summ|number_format :2:".":" "} руб. ({$total.count} шт.) 
                 </div>
                 
-                {if $options[9].value}
+                {if $options[9].value || $options[10].value}
                     <br>
                     <div><a>Размерная сетка:</a></div>
                     <div class='flex-line'>
@@ -66,6 +66,16 @@
                             <img src='{$img|img:"100x100x2"}'/>
                         </a>
                     {/foreach}
+                    {if $options[10].value}
+                        <a href='#size-table' class='button yellow js-modal' style="margin-top:10px">
+                             Таблица размеров
+                        </a>
+                        <div id="size-table" style="display:none">
+                           <div class="zakupka__table-sises">
+                           {$options[10].value}
+                           </div>
+                        </div>
+                    {/if}
                     </div>
                 {/if}
             </div>
@@ -76,16 +86,19 @@
                     Профиль организатора
                 </a>
                 {if $user}
-                <a href="/messages/user/{$organizator.id}/" class="main-info__link-item main-info__link">
-                    Написать сообщение
-                </a>
-                <label class="checkbox">
-                    <input class="checkbox__input" type="checkbox" 
-                           {if $isFavorite}checked="true"{/if}
-                           onchange="catalog.setPurchaseFavorite({$purchase.id}, this)"/>
-                    <span class="checkbox__check checkbox__check-stat"></span>
-                    <span>Подписаться на закупку</span>
-                </label>
+                    <a href="/messages/user/{$organizator.id}/" class="main-info__link-item main-info__link">
+                        Написать сообщение
+                    </a>
+                    {if $purchase.providerInfo}
+                    <p> {$purchase.providerInfo.name} </p>
+                    <label class="checkbox">
+                        <input class="checkbox__input" type="checkbox" 
+                               {if $isFavorite}checked="true"{/if}
+                               onchange="catalog.setPurchaseFavorite({$purchase.provider}, this)"/>
+                        <span class="checkbox__check checkbox__check-stat"></span>
+                        <span>Подписаться на закупку</span>
+                    </label>
+                    {/if}
                 {/if}
             </div>
         </div>

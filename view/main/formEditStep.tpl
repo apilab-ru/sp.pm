@@ -14,7 +14,7 @@
                 <div class="control-group">
                     <label class="control-label">Текст </label>
                     <div class="controls">
-                        <textarea name="text">{$object.text}</textarea>
+                        <textarea name="text" style="width:100%;box-sizing: border-box;">{$object.text}</textarea>
                     </div>
                 </div> 
                 <div class="form-actions submitLine">

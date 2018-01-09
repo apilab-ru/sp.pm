@@ -12,6 +12,7 @@ return [
     "catalog" => [
         "catsEdit"       => ["admin"],
         "discountsTable" => ["admin"],
+        "provider"       => ["admin"],
         "purchaseTable"  => ["admin",
             "organizator" => ["user" => $_SESSION['user']['id']]
         ]
@@ -19,7 +20,8 @@ return [
     "main" => [
         "editFaq"          => ["admin"],
         "listDelivery"     => ["admin"],
-        "editPageDelivery" => ["admin"]
+        "editPageDelivery" => ["admin"],
+        "editPagePay"      => ["admin"]
     ],
     "notice" => [
         "editAccount" => ["admin"]

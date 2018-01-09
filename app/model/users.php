@@ -91,7 +91,7 @@ class users extends base
 
     public function saveUser($form)
     {
-        dlog('saveuser', $form);
+        //dlog('saveuser', $form);
         $form = $this->clearForm($form, $this->user);
         return $this->updateobject('users', $form);
     }
@@ -117,5 +117,10 @@ class users extends base
         return [
             'stat' => 1
         ];
+    }
+    
+    public function getUsersFromFavorite($provider) 
+    {
+        return $this->db->select("SELECT u.* FROM users as u,`purchase_favorite` as f WHERE f.user = u.id && f.purchase = ?d", $provider);
     }
 }

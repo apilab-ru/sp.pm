@@ -25,7 +25,14 @@ class main extends base{
     
     public function oplata()
     {
-        echo  $this->render('main/oplata', []);
+        $arts     = new \app\model\arts();
+        $art = $arts->getArtsStruct(3);
+        $art = $art[0];
+        $steps = $arts->getSteps(3);
+        echo  $this->render('main/oplata', [
+            'art'   => $art,
+            'steps' => $steps
+        ]);
         return [
             "struct" => "pay"
         ];
@@ -167,9 +174,28 @@ class main extends base{
         
         $art = $art[0];
         
-        echo $this->render('main/editDeliveryPage',[
+        echo $this->render('main/editStepPage',[
             'art'   => $art,
-            'steps' => $steps
+            'steps' => $steps,
+            'title' => 'Страница доставки',
+            'struct' => 5
+        ]);
+    }
+    
+    public function editPagePay()
+    {
+        $st  = 3;
+        $arts = new \app\model\arts();
+        $steps = $arts->getSteps($st);
+        $art   = $arts->getArtsStruct($st);
+        
+        $art = $art[0];
+        
+        echo $this->render('main/editStepPage',[
+            'art'   => $art,
+            'steps' => $steps,
+            'title' => 'Страница оплаты',
+            'struct' => $st
         ]);
     }
     
@@ -196,6 +222,24 @@ class main extends base{
             'id'     => $art['id'],
             'struct' => 5
         ]);
+    }
+    
+    public function saveTextPage($param, $send)
+    {
+        $struct = intval( $send['struct'] );
+        
+        $arts = new \app\model\arts();
+        $art   = $arts->getArtsStruct($struct);
+        $art = $art[0];
+        $arts->updateObject('arts', [
+            'text'   => $send['text'],
+            'id'     => $art['id'],
+            'struct' => $struct
+        ]);
+        
+        return [
+            "stat" => 1
+        ];
     }
     
     public function deleteStep($param, $send)

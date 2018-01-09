@@ -7,17 +7,17 @@ var arts = new function()
     {
         var timeoutUpdate;
         $('#arts').nestable({maxDepth:2})
-                .on('change', (e) => {
-                    clearTimeout(timeoutUpdate);
-                    setTimeout(() => {
-                        var tree = $('#arts').nestable('serialize');
-                        var list = self.getItemTree([], tree, 0);
-                        self.send('/admin/ajax/main/updateArtsTree',{
-                            list : list
-                        });
-                
-                    }, 700)
-                })
+            .on('change', (e) => {
+                clearTimeout(timeoutUpdate);
+                setTimeout(() => {
+                    var tree = $('#arts').nestable('serialize');
+                    var list = self.getItemTree([], tree, 0);
+                    self.send('/admin/ajax/main/updateArtsTree',{
+                        list : list
+                    });
+
+                }, 700)
+            })
     }
     
     this.initFormEdit = function(selector)

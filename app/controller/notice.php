@@ -15,7 +15,7 @@ class notice extends base
        ]));
    }
    
-    public function testNotice()
+    /*public function testNotice()
     {
         set_time_limit(10);
         $user = (new \app\model\users())->getUser(3);
@@ -30,6 +30,22 @@ class notice extends base
             pr('ok send');
         }catch(\Exception $e){
             pr('error', $e);
+        }
+    }*/
+   
+    public function createPurchase($purchase)
+    {
+        $users = new \app\model\users();
+        $list = $users->getUsersFromFavorite($purchase['provider']);
+        foreach($list as $user){
+            $this->sendNotice($user,
+                "Появилась новая закупка, от поставщика, на которго вы подписанны",       
+                $this->render('notice/createPurchase',[
+                   "purchase" => $purchase,
+                   "user"     => $user,
+                   "site"     => $this->getSite()
+                ]
+            ));
         }
     }
    

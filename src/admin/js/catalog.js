@@ -14,10 +14,30 @@ var catalog = new function()
             $file, $list   
         );
         
+        $box.find('.js-text-option').each((n,i)=>{
+            var myid  = $(i).attr('id');
+            CKEDITOR.replace(myid,{
+                height : 100,
+                toolbar : [
+                    { name: 'document', items: [ 'Source' ] },
+                    { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord',  'Undo', 'Redo' ] },
+                    { name: 'insert', items: [ 'Table', 'HorizontalRule' ] },
+                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                    { name: 'colors', items: [ 'TextColor', 'BGColor' ] }
+                ]
+            });
+        });
+        
         $box.on('submit',function(event){
             event.preventDefault();
             event.stopPropagation();
             var form = $box.serializeObject();
+            
+            $box.find('.js-text-option').each((n,i)=>{
+                var name = $(i).attr('myname');
+                var myid = $(i).attr('id');
+                form.option[name] = CKEDITOR.instances[myid].getData();
+            });
             
             console.log('form', form);
             

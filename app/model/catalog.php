@@ -160,7 +160,7 @@ class catalog extends base
         if($filter['status']){
             if($filter['status']['start']){
                 $date = date("Y-m-d");
-                $sql .= " && p.active = 1 && (p.date_stop >= '$date' || p.date_stop is NULL)";
+                $sql .= " && p.active = 1 && (p.date_stop >= '$date' || p.date_stop is NULL || p.date_stop = '0000-00-00')";
             }
             if($filter['status']['stop']){
                 $date = date("Y-m-d",strtotime("+2 day"));
@@ -278,6 +278,7 @@ class catalog extends base
     public function getPurchase($id)
     {
         $row = $this->db->selectRow("select * from purchase where id=?d", $id);
+        $row['providerInfo'] = $this->db->selectRow("select * from providers where id=?d", $row['provider']);
         return $row;
     }
     
@@ -311,9 +312,9 @@ class catalog extends base
                 $purchase);
     }
     
-    public function checkPurchaseFavorite($purchase, $user)
+    public function checkPurchaseFavorite($provider, $user)
     {
-        return $this->db->selectCell("select id from purchase_favorite where user=?d && purchase=?d", $user, $purchase);
+        return $this->db->selectCell("select id from purchase_favorite where user=?d && purchase=?d", $user, $provider);
     }
     
     public function getPurchaseDiscount($purchase)
@@ -328,7 +329,7 @@ class catalog extends base
     
     public function getPurchaseOptions($purchase)
     { 
-        $this->db->setLogger();
+        //$this->db->setLogger();
         $list = $this->db->select("select o.name,o.type,o.id as ARRAY_KEY, o.key, "
                 . " (CASE o.type "
                     . " WHEN 'text' then value_text "
@@ -575,13 +576,25 @@ class catalog extends base
         $discounts = $send['discounts'];
         unset($send['discounts']);
         
+        if($send['id']){
+            $purchase = $this->getPurchase($send['id']);
+        }
+        
         $id = $this->updateobject('purchase', $send);
+        
         
         if(!$id){
             throw new \Exception("Ошибка сохранения");
         }
         $this->updateListTags($id, $tags);
         $this->updateListDiscounts($id, $discounts);
+        
+        if($purchase['provider'] != $send['provider'] && $send['provider']){
+            $purchase = $this->getPurchase($id);
+            $notice = new \app\controller\notice();
+            $notice->createPurchase($purchase);
+        }
+        
         return $id;
     }
     

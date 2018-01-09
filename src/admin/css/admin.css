@@ -31,3 +31,11 @@
     width: 100px;
     margin-right: 5px;
 }
+.flex-nowrap{
+    flex-wrap: nowrap !important;
+}
+.dd-one-line-name{
+    max-height: 1.2em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

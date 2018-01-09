@@ -33,7 +33,11 @@ var path = {
             'src/project/js/worker.js'
         ],
         css : ['src/project/css/*.css','vendor/chosen/chosen.css']
-    }
+    },
+    lib : [
+        'src/project/js/events.js',
+        'src/admin/jquery-ui.js'
+    ]
     
 };
 
@@ -84,6 +88,16 @@ gulp.task('js', function() {
     ];
 });
 
+gulp.task('lib', function(){
+   return  gulp.src(path.lib)
+        .pipe(minify({
+            mangle: {
+                keepClassName: true,
+                keepFnName: true
+            }
+         }))
+        .pipe(gulp.dest('build'));
+});
 
 gulp.task('css-admin', function() {
     return gulp.src(path.admin.css)
@@ -146,5 +160,5 @@ gulp.task('watch', function() {
     
 });
 
-gulp.task('prod', ['js-prod','css-prod','css-admin-prod','js-admin-prod'])
+gulp.task('prod', ['js-prod','css-prod','css-admin-prod','js-admin-prod', 'lib'])
 gulp.task('dev', ['js','css','css-admin','js-admin'])

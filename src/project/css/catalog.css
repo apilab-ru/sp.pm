@@ -409,3 +409,19 @@ a.chosen-single {
     overflow: auto;
     margin-right: auto;
 }
+.zakupka__table-sises{
+    padding: 10px;
+}
+.zakupka__table-sises table td {
+    border: 1px solid;
+    padding: 5px;
+}
+.zakupka__table-sises table th{
+    padding: 5px;
+    color:#fff;
+    background: #000;
+    border-right: 1px solid #fff;
+}
+.zakupka__table-sises table th:last-of-type{
+    border-right: 1px solid #000;
+}

@@ -19,6 +19,16 @@
                                 </div>
                             </div> 
                             <div class="control-group">
+                                <label class="control-label">Поставщик </label>
+                                <div class="controls">
+                                    <select name="form[provider]">
+                                        {foreach from=$providers item=item}
+                                            <option value="{$item.id}" {if $object.provider == $item.id}selected{/if}> {$item.name} </option>
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-group">
                                 <label class="control-label">Организатор </label>
                                 <div class="controls">
                                     <select name="form[user]">
@@ -128,7 +138,7 @@
                                         </label>
                                     {/if}
                                     {if $option.type=='text'}
-                                        <textarea name="option[{$option.id}]" id="option{$option.id}{$smarty.now}" class="js-text-option text-option">
+                                        <textarea myname="{$option.id}" name="option[{$option.id}]" id="option{$option.id}{$smarty.now}" class="js-text-option text-option">
                                             {$object.options[$option.id].value}
                                         </textarea>
                                     {/if}

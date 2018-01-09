@@ -14,11 +14,15 @@ class admin extends base
                 die("Доступ закрыт");
             }
         }
+        session_write_close();
     }
     
     public $menu = [
-        /*"" => [
-          "name" => "Главная"  
+        /*"logger" => [
+            "name" => "Логгер",
+            "list" => [
+                "log" => ["name" => "Лог"]
+            ]
         ],*/
         "users" => [
             "name" => "Сотрудники и пользователи",
@@ -29,6 +33,7 @@ class admin extends base
         "catalog" => [
             "name" => "Каталог",
             "list" => [
+                "providersTable"  => ["name" => "Поставщики"],
                 "purchaseTable"   => ["name" => "Список закупок"],
                 "stockTable"      => ["name" => "Товары закупок"],
                 "catsEdit"        => ["name" => "Категории"],
@@ -42,7 +47,8 @@ class admin extends base
             "list" => [
                 "editFaq"          => ["name" => "Редактирование FAQ"],
                 "listDelivery"     => ["name" => "Список адресов доставки" ],
-                "editPageDelivery" => ["name" => "Редактирование страницы доставки"]
+                "editPageDelivery" => ["name" => "Редактирование страницы доставки"],
+                "editPagePay"      => ["name" => "Редактирование страницы оплаты"]
             ]
         ],
         "notice" => [
@@ -195,6 +201,32 @@ class admin extends base
             'cursor' => $this->cursor,
             'html'   => $html
         ));
+    }
+    
+    public function editProvider($param)
+    {
+        if($param['send']['id']){
+            $providers = new \app\model\providers();
+            $object = $providers->getProvider($param['send']['id']);
+        }
+        return $this->render('providers/formEdit', [
+            'object' => $object
+        ]);
+    }
+    
+    public function deleteProvider($param)
+    {
+        $providers = new \app\model\providers();
+        $providers->delete($param['send']['id']);
+    }
+    
+    public function saveProvider($send)
+    {
+        $providers = new \app\model\providers();
+        $id = $providers->saveProvider($send['send']['form']);
+        return [
+            'stat' => 1
+        ];
     }
     
 }
