@@ -22,9 +22,27 @@ class notice extends base
         return $this->updateObject('smtp_accounts', $form);
     }
     
+    public function shedule($email, $subject, $text)
+    {
+        $this->db->insert('mailing',[
+            'stat'    => 'shedule',
+            'email'   => $email,
+            'subject' => $subject,
+            'text'    => $text
+        ]);
+    }
+    
+    public function getSheduled($limit)
+    {
+        $list = $this->db->select("select *,id as ARRAY_KEY from mailing where stat='shedule' limit ?d",$limit);
+        $this->db->query("UPDATE mailing SET stat='sending' where id in(?a)", array_keys($list));
+        return $list;
+    }
+    
     public function send($email, $subject,  $text)
     {
         $acc    = $this->getAccount();
+        pr($acc);
         $login  = $acc['login'];
         $pass   = $acc['pass'];
         $host   = $acc['host'];
@@ -57,8 +75,18 @@ class notice extends base
             $mail->send();
             return true;
         } catch (\Exception $e) {
-            echo 'Message could not be sent.';
-            echo 'Mailer Error: ' . $mail->ErrorInfo;
+            $error = 'Message could not be sent.'
+            . 'Mailer Error: ' . $mail->ErrorInfo;
+            throw new \Exception($error);
         }
+    }
+    
+    public function setStat($id, $stat, $log=null)
+    {
+        $this->updateObject('mailing', [
+            'id'   => $id,
+            'stat' => $stat,
+            'log'  => $log
+        ]);
     }
 }

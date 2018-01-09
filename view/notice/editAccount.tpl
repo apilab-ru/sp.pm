@@ -17,7 +17,7 @@
             <div class="control-group">
                 <label class="control-label">Логин </label>
                 <div class="controls">
-                    <input type="text" name="host" value="{$object.login}"/>
+                    <input type="text" name="login" value="{$object.login}"/>
                 </div>
             </div>
             <div class="control-group">

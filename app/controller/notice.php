@@ -4,6 +4,8 @@ namespace app\controller;
 
 class notice extends base
 {
+   public $limit = 1; 
+    
    public function createOrder($user, $orderId, $total)
    {
        $user = (new \app\model\users())->getUser($user);
@@ -15,7 +17,7 @@ class notice extends base
        ]));
    }
    
-    /*public function testNotice()
+    public function testNotice()
     {
         set_time_limit(10);
         $user = (new \app\model\users())->getUser(3);
@@ -31,7 +33,7 @@ class notice extends base
         }catch(\Exception $e){
             pr('error', $e);
         }
-    }*/
+    }
    
     public function createPurchase($purchase)
     {
@@ -90,7 +92,7 @@ class notice extends base
        
        (new \app\model\messages)->sendMessage(0, $user['id'], $text);
        
-       $notice->send($user['email'], $subject, $toEmail);
+       $notice->shedule($user['email'], $subject, $toEmail);
    }
    
    public function getSite()
@@ -121,4 +123,40 @@ class notice extends base
            "user" => $user
        ]));
     }
+    
+    public function cron()
+    {
+        set_time_limit(30);
+        
+        $notice = new \app\model\notice();
+        $list   = $notice->getSheduled($this->limit);
+        
+        register_shutdown_function([$this, 'shutdown']);
+        
+        $this->list = $list;
+        foreach($list as $key=>$item){
+            try{
+                $notice->send($item['email'], $item['subject'], $item['text']);
+                $notice->setStat($item['id'], 'send');
+            }catch(\Exception $e){
+                $notice->setStat($item['id'], 'error', $e->getMessage());
+            }
+            unset($this->list[$key]);
+        }
+    }
+    
+    public function shutdown()
+    {
+        if($this->list){
+            $file = $_SERVER['DOCUMENT_ROOT'] . "/cache/error.txt";
+            file_put_contents($file, 'error send ' . print_r($this->list, true));
+            $notice = new \app\model\notice();
+            dlog('error sended', $this->list);
+            foreach($this->list as $item){
+               $notice->setStat($item['id'], 'shedule', 'not sended'); 
+            }
+        }
+    }
+    
+    
 }
