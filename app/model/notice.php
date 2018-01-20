@@ -42,7 +42,7 @@ class notice extends base
     public function send($email, $subject,  $text)
     {
         $acc    = $this->getAccount();
-        pr($acc);
+        //pr($acc);
         $login  = $acc['login'];
         $pass   = $acc['pass'];
         $host   = $acc['host'];

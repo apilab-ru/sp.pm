@@ -12,7 +12,7 @@
         <div class="dd" id="cats">
             <ol class="dd-list">
                 {foreach from=$cats item=item}
-                    {include file='app:main/artEditItem' item=$item}
+                    {include file='app:catalog/catsEditChild' item=$item}
                 {/foreach}
             </ol>
         </div>

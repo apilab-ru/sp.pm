@@ -135,16 +135,20 @@ var catalog = new function(){
         event.stopPropagation();
         var $parent = $item.parents('.order__zakupka:first');
         var $loader = self.loader( $parent );
-        self.send("/ajax/catalog/orderCreate/",{
+        self.send("/ajax/catalog/createOrder/",{
             id : id
         })
           .then((data)=>{
             if(!data.stat){
                 throw(data.error);
             }else{
-                console.log('order info', data);
+                console.log('data', data);
+                //location.pathname = `/order/${data.order}/`;
+                navigation.go(`/order/${data.order}/`)
+                //console.log('order info', data);
                 //Update basket
                 $loader.remove();
+                basket.updateCounter();
                 //navigation.reload();
             }  
           })

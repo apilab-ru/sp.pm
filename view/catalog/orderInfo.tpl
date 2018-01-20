@@ -62,6 +62,7 @@
         </div>
     </div>
     
+    {if $order.status == 'check'}
     <div class='order-info__req-info'>
         Для оплаты заказа, переведите {$order.summ}руб на реквизиты {$purchase.user.requsites}. Затем заполните отчёт об оплате далее.
     </div>
@@ -85,4 +86,5 @@
             </div>
         </form>
     </div>
+    {/if}
 {/strip}

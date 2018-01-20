@@ -4,9 +4,10 @@
 <head>
     <meta charset="utf-8"/>
     <title>{$title}</title>
-    <link href="/build/build.css?1{$smarty.now}" type="text/css" rel="stylesheet" />
+    <link href="/build/build.css?2" type="text/css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lobster|Ubuntu:400,700&amp;subset=cyrillic" rel="stylesheet">
     <script src="/build/events.js"></script>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header class="main-head main-col">
@@ -123,7 +124,7 @@
         </div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="/build/build.js?2{$smarty.now}"></script>
+    <script src="/build/build.js?3{*$smarty.now*}"></script>
     {if $message && $user}
     <script>
         {if $user}

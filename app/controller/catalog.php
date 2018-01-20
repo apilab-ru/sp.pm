@@ -175,10 +175,10 @@ class catalog extends base
         $widget  =  new \app\controller\widget();
         
         $data = $catalog->getDataOrders([
-            'user'   => $_SESSION['user']['id'],
-            'status' => 'complete',
-            'limit'  => 10,
-            'page'   => $args['page']
+            'user'     => $_SESSION['user']['id'],
+            'complete' => 1,
+            'limit'    => 10,
+            'page'     => $args['page']
         ]);
         
         $data['statuses']   = $catalog->orderStatuses;
@@ -212,7 +212,8 @@ class catalog extends base
         echo $this->render("catalog/orderId",[
             'order'       => $order,
             'purchase'    => $purchase,
-            'list'        => $list
+            'list'        => $list,
+            'statuses'    => $catalog->orderStatuses
         ]);
     }
 
@@ -737,7 +738,7 @@ class catalog extends base
         return ['stat'=>1];
     }
     
-    public function orderCreate($args, $send)
+    public function createOrder($args, $send)
     {
         $basket  = new \app\model\basket();
         $list    = $basket->getList();
@@ -782,6 +783,15 @@ class catalog extends base
         return [
             'stat'  => 1,
             'order' => $orderId
+        ];
+    }
+    
+    public function getCountBasket()
+    {
+        $basket  = new \app\model\basket();
+        return [
+            'stat'  => 1,
+            'count' => $basket->calcCount()
         ];
     }
     

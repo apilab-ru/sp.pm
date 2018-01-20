@@ -4,24 +4,26 @@ namespace app\controller;
 
 class notice extends base
 {
-   public $limit = 1; 
+   public $limit = 15; 
     
-   public function createOrder($user, $orderId, $total)
+   public function createOrder($user, $order, $total)
    {
        $user = (new \app\model\users())->getUser($user);
        $this->sendNotice($user,
-        "Вы оформили заказ на сайте СП Бутичок",       
-        $this->render('notice/createOrder',[
-           "order" => $orderId,
-           "user"  => $user
+            "Вы оформили заказ на сайте СП Бутичок",       
+            $this->render('notice/createOrder',[
+               "total" => $total,
+               "order" => $order,
+               "user"  => $user,
+               "site"  => $this->getSite()
        ]));
    }
    
-    public function testNotice()
+    /*public function testNotice()
     {
         set_time_limit(10);
-        $user = (new \app\model\users())->getUser(3);
-        $notice = new \app\model\notice();
+        $user    = (new \app\model\users())->getUser(3);
+        $notice  = new \app\model\notice();
         $toEmail = $this->render("notice/emailHeader",[
            'user' => $user,
            'site' => $this->getSite()
@@ -33,7 +35,7 @@ class notice extends base
         }catch(\Exception $e){
             pr('error', $e);
         }
-    }
+    }*/
    
     public function createPurchase($purchase)
     {

@@ -14,6 +14,8 @@ var basket = new function()
         };
     }
     
+    this.inormed = 0;
+    
     this.toCard = function(stock, myb)
     {
         var $parent = $(myb);
@@ -24,6 +26,12 @@ var basket = new function()
         }
         $parent.find('.js-current').val(++ old);
         self.update( stock, old, self.getParam($parent));
+        
+        if(!self.inormed){
+           self.inormed = 1; 
+           popUp('Не забудьте оформить заказ, кликнув по корзине <- !', 'info');
+        } 
+        
     }
     
     this.minus = function(stock, myb)
@@ -57,6 +65,16 @@ var basket = new function()
         }).then((mas)=>{
             self.updateViewCount( mas.count );
         })
+    }
+    
+    this.updateCounter = function()
+    {
+        return self.post('catalog','getCountBasket')
+            .then((mas)=>{
+                console.log('mas', mas);
+                self.updateViewCount(mas.count);
+                return mas;
+            })
     }
     
     this.updateViewCount = function(count)

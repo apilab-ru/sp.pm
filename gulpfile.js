@@ -10,8 +10,18 @@ var concat = require('gulp-concat');
 
 var path = {
     admin : {
-        css : ['src/admin/css/*.css','src/project/css/spinner.css','vendor/chosen/chosen.css','vendor/nestable/nestable.css'],
-        js  : ['src/admin/js/*.js','vendor/nestable/jquery.nestable.js']
+        css : [
+            'src/admin/css/*.css',
+            'src/project/css/spinner.css',
+            'vendor/chosen/chosen.css',
+            'vendor/nestable/nestable.css',
+            'vendor/toastr/toastr.min.css'
+        ],
+        js  : [
+            'src/admin/js/*.js',
+            'vendor/nestable/jquery.nestable.js',
+            'vendor/toastr/toastr.js'
+        ]
     },
     client : {
         js : [
@@ -27,17 +37,25 @@ var path = {
             'src/project/js/user.js',
             'src/admin/js/fileUploader.js',
             'src/project/js/map.js',
-            'vendor/chosen/chosen.jquery.js'
+            'vendor/chosen/chosen.jquery.js',
+            'vendor/toastr/toastr.js'
         ],
         worker : [
             'src/project/js/worker.js'
         ],
-        css : ['src/project/css/*.css','vendor/chosen/chosen.css']
+        css : [
+            'src/project/css/*.css',
+            'vendor/chosen/chosen.css',
+            'vendor/toastr/toastr.min.css'
+        ]
     },
     lib : [
         'src/project/js/events.js',
         'src/admin/jquery-ui.js'
-    ]
+    ],
+    /*libCss : [
+        'vendor/jquery.jgrowl.min.css'
+    ]*/
     
 };
 
@@ -89,14 +107,21 @@ gulp.task('js', function() {
 });
 
 gulp.task('lib', function(){
-   return  gulp.src(path.lib)
-        .pipe(minify({
-            mangle: {
-                keepClassName: true,
-                keepFnName: true
-            }
-         }))
-        .pipe(gulp.dest('build'));
+   return[  
+        gulp.src(path.lib)
+            .pipe(minify({
+                mangle: {
+                    keepClassName: true,
+                    keepFnName: true
+                }
+             }))
+            .pipe(gulp.dest('build')),
+       
+            
+        /*gulp.src(path.libCss)
+            .pipe(concat('lib.css'))
+            .pipe(gulp.dest('build'))*/
+    ];
 });
 
 gulp.task('css-admin', function() {

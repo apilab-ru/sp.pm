@@ -8,7 +8,8 @@ class catalog extends base
         'create'   => "Создан", 
         'check'    => "Отмечен что оплачен", 
         'verifed'  => "Оплачен" ,
-        'complete' => "Завершен"
+        'complete' => "Завершен",
+        'error'    => "Отменён"
     ];
     
     public $statuses = [
@@ -251,7 +252,11 @@ class catalog extends base
         }
         
         if($filter['notcomplete']){
-            $sql .= " && o.status != 'complete'";
+            $sql .= " && o.status not in ('complete','error')";
+        }
+        
+        if($filter['complete']){
+            $sql .= " && o.status in ('complete','error')";
         }
         
         if($filter['status'] && $this->orderStatuses[$filter['status']]){
@@ -339,9 +344,7 @@ class catalog extends base
                     . " when 'files' then value_files"
                 . " end) as `value`"
                 . " from purchase_options as o, purchase_values as v"
-                . " where v.purchase = ?d && o.id = v.option_id", $purchase);
-        
-       
+                . " where v.purchase = ?d && o.id = v.option_id order by o.order ASC", $purchase);
         
         if($list[9]['value']){
            $list[9]['value'] = json_decode($list[9]['value'],1);
@@ -534,7 +537,7 @@ class catalog extends base
     
     public function getOptions()
     {
-        return $this->db->select("select *,id as ARRAY_KEY from purchase_options");
+        return $this->db->select("select *,id as ARRAY_KEY from purchase_options order by `order` ASC");
     }
     
     public function updateListTags($id, $tags)
@@ -799,7 +802,7 @@ class catalog extends base
         $order = $this->getOrder($id);
         
         $notice = new \app\controller\notice();
-        $notice->createOrder($order['user'], $id, $total);
+        $notice->createOrder($order['user'], $order, $total);
         
         return $order;
     }
@@ -877,6 +880,9 @@ class catalog extends base
     
     public function getTotalPurchase($id)
     {
-        return $this->db->selectRow("SELECT SUM(`count`) as 'count', SUM(`summ`) as 'summ' FROM `basket_stocks` WHERE purchase = ?d group by purchase", $id);
+        return $this->db->selectRow("SELECT SUM(s.`count`) as 'count', SUM(s.`summ`) as 'summ' 
+            FROM `basket_stocks` as s left join orders as o on o.id = s.order_id
+            WHERE s.purchase = ?d && o.status != 'error'
+            group by s.purchase", $id);
     }
 }

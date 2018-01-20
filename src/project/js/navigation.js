@@ -16,7 +16,7 @@
             
             var url = $(myb).attr('href');
             
-            self.go(url);
+            return self.go(url);
         }
         
         this.goLink = function(url, e)
@@ -24,7 +24,7 @@
             e.preventDefault();
             e.stopPropagation();
             $('.menu-checked').removeClass('menu-checked');
-            self.go(url);
+            return self.go(url);
         }
         
         this.goMenu = function(url, e, original)
@@ -36,7 +36,7 @@
                 original = url;
             }
             $('.menu-item a[href="'+ original +'"]').parent().addClass('menu-checked');
-            self.go(url);
+            return self.go(url);
         }
         
         this.go = function(url){
@@ -48,7 +48,7 @@
                 $menu.parent().addClass('menu-checked');
             }
             
-            self.send(url,{
+            return self.send(url,{
                 page : 'ajax'
             }).then((res)=>{
                 $('.content').html(res);
@@ -72,7 +72,7 @@
         self.reload = function(){
             self.loader( $('.content') );
             //self.go( location.pathname + location.search );
-            self.send(location.pathname + location.search,{
+            return self.send(location.pathname + location.search,{
                 page : 'ajax'
             }).then((res)=>{
                 $('.content').html(res);

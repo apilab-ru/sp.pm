@@ -233,7 +233,9 @@ class images extends base{
                 break;
 
             case 'png':
-                $file = imagecreatefrompng($path);
+                $file = imageCreateFromPng($path);
+                imageAlphaBlending($file, false);
+                imageSaveAlpha($file, true);
                 break;
 
             case 'bmp':
