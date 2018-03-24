@@ -18,4 +18,11 @@ class logger extends base{
         (new \app\model\log())->clearTable();
     }
     
+    public function restore()
+    {
+        $model = new \app\model\log();
+        $list = $model->db->select("select * from stock where id<1469");
+        pr($list);
+    }
+    
 }

@@ -66,6 +66,18 @@
                         {/if}
                     </div>
                 </div>
+                {if $group.purchase.sbor}
+                    <div class='order__count-box'>
+                        <div>
+                           <div class='order__name'>
+                               Сбор:
+                           </div>
+                           <div class='catalog__summ-val'>
+                               {$group.purchase.sbor}%
+                           </div>
+                       </div>
+                    </div>
+                {/if}
                 <div class='order__price-box'>
                     <div class='order__name'>
                         Цена:

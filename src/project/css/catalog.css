@@ -403,6 +403,8 @@ a.chosen-single {
 .p_stock__modal-descr {
     max-width: 550px;
     margin-left: 50px;
+    max-height: calc(100vh - 250px);
+    overflow: auto;
 }
 .p_stock__modal-img-list {
     max-height: calc(100vh - 200px);

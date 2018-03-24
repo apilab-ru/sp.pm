@@ -123,8 +123,10 @@ var catalog = new function(){
                 html : $(href).clone().html()
             });
             self.modalWin( $div );
+            return Promise.resolve($div);
         }else{
             self.modalWin( "<div class='modal-win__img-box'><img src='"+ href +"'/></div>" );
+            return Promise.resolve(null);
         }
     }
     
@@ -207,8 +209,10 @@ $(function(){
     $(document).on('click','.js-modal',function(event){
         event.preventDefault();
         event.stopPropagation();
-        catalog.showModal( $(this).attr('href') );
+        catalog.showModal( $(this).attr('href') ).then(($div)=>{
+            if($div){
+                img.initBox($div);
+            }
+        })
     })
 })
-
-

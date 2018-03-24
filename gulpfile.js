@@ -35,6 +35,7 @@ var path = {
             'src/project/js/navigation.js',
             'src/project/js/serialize.js',
             'src/project/js/user.js',
+            'src/project/js/img.js',
             'src/admin/js/fileUploader.js',
             'src/project/js/map.js',
             'vendor/chosen/chosen.jquery.js',
